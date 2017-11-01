@@ -14,4 +14,5 @@ $mysqli = new mysqli($configDbAddr, $configDbUser, $configDbPass, $configDbDb);
 if ($mysqli->connect_errno) {
 	exit();
 }
+$mysqli->autocommit(FALSE);
 ?>
