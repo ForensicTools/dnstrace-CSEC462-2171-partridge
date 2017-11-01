@@ -11,7 +11,7 @@ if(count($argv) <= 1 || count($argv) >= 4) {
 	echo PHP_EOL;
 	echo "Usage: php fqdn_add.php \"[fqdn]\" \"[rep_flag]\"" . PHP_EOL;
 	echo "  If no reputation flag is specified, USERADD (reputation 0) will be used." . PHP_EOL;
-	exit();
+	include "inc/exit.php";
 }
 
 if(count($argv) == 2) {
@@ -22,4 +22,8 @@ if(count($argv) == 2) {
 $argFQDN = $argv[1];
 
 $dbCheckSrcRepExists = $mysqli->query("SELECT * FROM `Sources` WHERE `Sources`.`ID` = '" . $argRep . "'");
+if($dbCheckSrcRepExists->num_rows != 1) {
+	echo "Cannot find reputation flag, please check your input or run rep_add.php\n";
+	include "inc/exit.php";
+}
 
