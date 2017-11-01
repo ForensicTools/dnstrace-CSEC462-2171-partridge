@@ -23,7 +23,17 @@ $argFQDN = $argv[1];
 
 $dbCheckSrcRepExists = $mysqli->query("SELECT * FROM `Sources` WHERE `Sources`.`ID` = '" . $argRep . "'");
 if($dbCheckSrcRepExists->num_rows != 1) {
-	echo "Cannot find reputation flag, please check your input or run rep_add.php\n";
+	echo "Cannot find reputation flag, please check your input or run rep_add.php" . PHP_EOL;
 	include "inc/exit.php";
 }
 
+$dbInsertNewFQDN = $mysqli->query("INSERT INTO `Reputation` (`FQDN`, `Source`) VALUES ('" . $argFQDN . "', '" . $argRep . "')");
+if(!$dbInsertNewFQDN) {
+	echo "There was an error running the insert query. No FQDN added." . PHP_EOL;
+	echo "SQL error information: " . $mysqli->error . PHP_EOL;
+	include "inc/exit.php";
+}
+
+echo "Added \"" . $argFQDN . "\" with flag " . $argRep . PHP_EOL;
+include "inc/exit.php";
+?>
