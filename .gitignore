@@ -1,2 +1,5 @@
 # ignore config.php files
 config.php
+
+# ignore dependency folder
+deps/**
