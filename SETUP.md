@@ -19,3 +19,7 @@ This project currently depends on the following:
 * python-whois by joepie91
 
 You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed, please open issues for any common problems until I get around to cleaning up that section.
+
+### 4. tools/config.example.php
+
+Edit this file as needed to connect to the data backend as an administrative user as well as tune any preferences, before copying it to config.php. The sections that you need to edit should be easy to identify as they are flagged as such.
