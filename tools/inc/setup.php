@@ -10,6 +10,11 @@ if((@include "config.php") === false) {
 	exit();
 }
 
+if((@include "../vendor/autoload.php") === false) {
+	echo "../vendor/autoload.php missing, please check Composer section of SETUP.md" . PHP_EOL;
+	exit();
+}
+
 $mysqli = new mysqli($configDbAddr, $configDbUser, $configDbPass, $configDbDb);
 if ($mysqli->connect_errno) {
 	exit();
