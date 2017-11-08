@@ -12,7 +12,15 @@ It behooves you to create two seperate users that *only* have access in varying 
 
 A full list of required privileges will be posted shortly.
 
-### 3. Dependencies
+### 3. Composer
+
+This project requires Composer for PHP-related package management. To prepare the environment, in this directory you should run the following command(s):
+
+* composer require layershifter/tld-extract
+
+And that will install a couple composer-related files as well as the necessary packages in vendor/*
+
+### 4. Other Dependencies
 
 This project currently depends on the following:
 
@@ -20,6 +28,6 @@ This project currently depends on the following:
 
 You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed, please open issues for any common problems until I get around to cleaning up that section.
 
-### 4. tools/config.example.php
+### 5. tools/config.example.php
 
 Edit this file as needed to connect to the data backend as an administrative user as well as tune any preferences, before copying it to config.php. The sections that you need to edit should be easy to identify as they are flagged as such.

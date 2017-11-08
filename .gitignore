@@ -3,3 +3,8 @@ config.php
 
 # ignore dependency folder
 deps/**
+
+# ignore composer data
+composer.json
+composer.lock
+vendor/**

@@ -41,8 +41,20 @@ function gdnsGetSOA($domain) {
 	
 	if($ret[0]) {
 		if(array_key_exists("Answer", $ret[1])) {
+			foreach($ret[1]["Answer"] as $retAns) {
+				$thisAns = rtrim($retAns["name"], ".");
+				if(strcmp($thisAns, $domain) != 0) {
+					return [true, $thisAns];
+				}
+			}
 			return [true, rtrim($ret[1]["Answer"][0]["name"], ".")];
 		} elseif(array_key_exists("Authority", $ret[1])) {
+			foreach($ret[1]["Authority"] as $retAns) {
+				$thisAns = rtrim($retAns["name"], ".");
+				if(strcmp($thisAns, $domain) != 0) {
+					return [true, $thisAns];
+				}
+			}
 			return [true, rtrim($ret[1]["Authority"][0]["name"], ".")];
 		} else {
 			return [false, $ret[1]];
