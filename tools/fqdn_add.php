@@ -4,7 +4,6 @@
  */
 
 include "inc/setup.php";
-include "inc/gdns.php";
 
 if(count($argv) <= 1 || count($argv) >= 4) {
 	echo "dnstrace - fqdn_add.php" . PHP_EOL;
@@ -28,19 +27,22 @@ if($dbCheckSrcRepExists->num_rows != 1) {
 	include "inc/exit.php";
 }
 
-$getDomainBySOA = gdnsGetSOA($argFQDN);
-if($getDomainBySOA[0]) {
-	$dbInsertNewFQDN = $mysqli->query("INSERT INTO `Reputation` (`FQDN`, `Domain`, `Source`) VALUES ('" . $argFQDN . "', '" . $getDomainBySOA[1] . "', '". $argRep . "')");
-	
-	if(!$dbInsertNewFQDN) {
-		echo "There was an error running the insert query. No FQDN added." . PHP_EOL;
-		echo "SQL error information: " . $mysqli->error . PHP_EOL;
-		include "inc/exit.php";
-	}
-	
-	echo "Added \"" . $argFQDN . "\" with flag " . $argRep . PHP_EOL;
-} else {
-	echo "Domain \"" . $argFQDN . "\" not added" . PHP_EOL;
+$parsedFQDN = tld_extract($argFQDN);
+
+if(!$parsedFQDN->isValidDomain()) {
+	echo "The domain given does not appear to be valid. No FQDN added." . PHP_EOL;
+	echo "Got: " . $argFQDN . PHP_EOL;
+	include "inc/exit.php";
 }
+
+$dbInsertNewFQDN = $mysqli->query("INSERT INTO `Reputation` (`FQDN`, `Domain`, `Source`) VALUES ('" . $argFQDN . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $argRep . "')");
+
+if(!$dbInsertNewFQDN) {
+	echo "There was an error running the insert query. No FQDN added." . PHP_EOL;
+	echo "SQL error information: " . $mysqli->error . PHP_EOL;
+	include "inc/exit.php";
+}
+
+echo "Added \"" . $argFQDN . "\" with flag " . $argRep . PHP_EOL;
 include "inc/exit.php";
 ?>

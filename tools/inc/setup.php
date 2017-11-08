@@ -19,4 +19,6 @@ $mysqli = new mysqli($configDbAddr, $configDbUser, $configDbPass, $configDbDb);
 if ($mysqli->connect_errno) {
 	exit();
 }
+
+include "../vendor/autoload.php";
 ?>
