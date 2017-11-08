@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `Reputation` (
   `FQDN` varchar(255) DEFAULT NULL,
   `Domain` varchar(255) DEFAULT NULL,
   `Source` varchar(255) DEFAULT NULL,
+  `LastUpdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `FQDN` (`FQDN`),
   KEY `ReputationDomain` (`Domain`),
   KEY `ReputationSource` (`Source`),
