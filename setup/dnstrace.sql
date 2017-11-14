@@ -30,6 +30,46 @@ CREATE TABLE IF NOT EXISTS `Contact` (
   CONSTRAINT `CT-WHO` FOREIGN KEY (`Domain`) REFERENCES `Whois` (`Domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- Dumping structure for table dnstrace.DNS_A
+CREATE TABLE IF NOT EXISTS `DNS_A` (
+  `Domain` varchar(255) DEFAULT NULL,
+  `FQDN` varchar(255) DEFAULT NULL,
+  `IPv4` varchar(16) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `A_REP` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='type 1';
+
+-- Dumping structure for table dnstrace.DNS_AAAA
+CREATE TABLE IF NOT EXISTS `DNS_AAAA` (
+  `Domain` varchar(255) DEFAULT NULL,
+  `FQDN` varchar(255) DEFAULT NULL,
+  `IPv6` varchar(40) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_AAAA_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 28';
+
+-- Dumping structure for table dnstrace.DNS_MX
+CREATE TABLE IF NOT EXISTS `DNS_MX` (
+  `Domain` varchar(255) DEFAULT NULL,
+  `FQDN` varchar(255) DEFAULT NULL,
+  `MX` varchar(255) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_MX_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 15';
+
+-- Dumping structure for table dnstrace.DNS_NS
+CREATE TABLE IF NOT EXISTS `DNS_NS` (
+  `Domain` varchar(255) DEFAULT NULL,
+  `FQDN` varchar(255) DEFAULT NULL,
+  `NS` varchar(255) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_NS_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 2';
+
 -- Dumping structure for table dnstrace.Nameservers
 CREATE TABLE IF NOT EXISTS `Nameservers` (
   `Domain` varchar(255) DEFAULT NULL,
