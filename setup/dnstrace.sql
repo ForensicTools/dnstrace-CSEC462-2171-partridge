@@ -13,8 +13,68 @@
 CREATE DATABASE IF NOT EXISTS `dnstrace` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `dnstrace`;
 
--- Dumping structure for table dnstrace.Contact
-CREATE TABLE IF NOT EXISTS `Contact` (
+-- Dumping structure for table dnstrace.DNS_A
+CREATE TABLE IF NOT EXISTS `DNS_A` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `IPv4` varchar(16) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `A_REP` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='type 1';
+
+-- Dumping structure for table dnstrace.DNS_AAAA
+CREATE TABLE IF NOT EXISTS `DNS_AAAA` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `IPv6` varchar(40) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_AAAA_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 28';
+
+-- Dumping structure for table dnstrace.DNS_MX
+CREATE TABLE IF NOT EXISTS `DNS_MX` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `MX` varchar(255) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_MX_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 15';
+
+-- Dumping structure for table dnstrace.DNS_NS
+CREATE TABLE IF NOT EXISTS `DNS_NS` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `NS` varchar(255) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_NS_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 2';
+
+-- Dumping structure for table dnstrace.Reputation
+CREATE TABLE IF NOT EXISTS `Reputation` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `Source` varchar(255) DEFAULT NULL,
+  `LastUpdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `ReputationDomain` (`Domain`),
+  KEY `ReputationSource` (`Source`),
+  KEY `LastUpdated` (`LastUpdated`),
+  CONSTRAINT `REP-SRC` FOREIGN KEY (`Source`) REFERENCES `Sources` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For to-add and reputation lookups';
+
+-- Dumping structure for table dnstrace.Sources
+CREATE TABLE IF NOT EXISTS `Sources` (
+  `ID` varchar(255) DEFAULT NULL,
+  `Description` varchar(1020) DEFAULT NULL,
+  `Score` tinyint(4) NOT NULL DEFAULT '0',
+  UNIQUE KEY `ID` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Dumping structure for table dnstrace.WHOIS_Contact
+CREATE TABLE IF NOT EXISTS `WHOIS_Contact` (
   `Domain` varchar(255) DEFAULT NULL,
   `NICHandle` varchar(510) DEFAULT NULL,
   `Name` varchar(510) DEFAULT NULL,
@@ -27,79 +87,11 @@ CREATE TABLE IF NOT EXISTS `Contact` (
   `Phone` varchar(255) DEFAULT NULL,
   `Fax` varchar(255) DEFAULT NULL,
   KEY `ContactDomain` (`Domain`),
-  CONSTRAINT `CT-WHO` FOREIGN KEY (`Domain`) REFERENCES `Whois` (`Domain`)
+  CONSTRAINT `CT-WHO` FOREIGN KEY (`Domain`) REFERENCES `WHOIS_General` (`Domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping structure for table dnstrace.DNS_A
-CREATE TABLE IF NOT EXISTS `DNS_A` (
-  `Domain` varchar(255) DEFAULT NULL,
-  `FQDN` varchar(255) DEFAULT NULL,
-  `IPv4` varchar(16) DEFAULT NULL,
-  `Current` bit(1) DEFAULT NULL,
-  KEY `Domain` (`Domain`),
-  CONSTRAINT `A_REP` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='type 1';
-
--- Dumping structure for table dnstrace.DNS_AAAA
-CREATE TABLE IF NOT EXISTS `DNS_AAAA` (
-  `Domain` varchar(255) DEFAULT NULL,
-  `FQDN` varchar(255) DEFAULT NULL,
-  `IPv6` varchar(40) DEFAULT NULL,
-  `Current` bit(1) DEFAULT NULL,
-  KEY `Domain` (`Domain`),
-  CONSTRAINT `DNS_AAAA_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 28';
-
--- Dumping structure for table dnstrace.DNS_MX
-CREATE TABLE IF NOT EXISTS `DNS_MX` (
-  `Domain` varchar(255) DEFAULT NULL,
-  `FQDN` varchar(255) DEFAULT NULL,
-  `MX` varchar(255) DEFAULT NULL,
-  `Current` bit(1) DEFAULT NULL,
-  KEY `Domain` (`Domain`),
-  CONSTRAINT `DNS_MX_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 15';
-
--- Dumping structure for table dnstrace.DNS_NS
-CREATE TABLE IF NOT EXISTS `DNS_NS` (
-  `Domain` varchar(255) DEFAULT NULL,
-  `FQDN` varchar(255) DEFAULT NULL,
-  `NS` varchar(255) DEFAULT NULL,
-  `Current` bit(1) DEFAULT NULL,
-  KEY `Domain` (`Domain`),
-  CONSTRAINT `DNS_NS_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 2';
-
--- Dumping structure for table dnstrace.Nameservers
-CREATE TABLE IF NOT EXISTS `Nameservers` (
-  `Domain` varchar(255) DEFAULT NULL,
-  `Nameserver` varchar(255) DEFAULT NULL,
-  KEY `NameserversDomain` (`Domain`),
-  CONSTRAINT `NS-WHO` FOREIGN KEY (`Domain`) REFERENCES `Whois` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- Dumping structure for table dnstrace.Reputation
-CREATE TABLE IF NOT EXISTS `Reputation` (
-  `FQDN` varchar(255) DEFAULT NULL,
-  `Domain` varchar(255) DEFAULT NULL,
-  `Source` varchar(255) DEFAULT NULL,
-  `LastUpdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `FQDN` (`FQDN`),
-  KEY `ReputationDomain` (`Domain`),
-  KEY `ReputationSource` (`Source`),
-  CONSTRAINT `REP-SRC` FOREIGN KEY (`Source`) REFERENCES `Sources` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For to-add and reputation lookups';
-
--- Dumping structure for table dnstrace.Sources
-CREATE TABLE IF NOT EXISTS `Sources` (
-  `ID` varchar(255) DEFAULT NULL,
-  `Description` varchar(1020) DEFAULT NULL,
-  `Score` tinyint(4) NOT NULL DEFAULT '0',
-  UNIQUE KEY `ID` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- Dumping structure for table dnstrace.Whois
-CREATE TABLE IF NOT EXISTS `Whois` (
+-- Dumping structure for table dnstrace.WHOIS_General
+CREATE TABLE IF NOT EXISTS `WHOIS_General` (
   `Domain` varchar(255) DEFAULT NULL,
   `DomainID` varchar(510) DEFAULT NULL,
   `Status` varchar(510) DEFAULT NULL,

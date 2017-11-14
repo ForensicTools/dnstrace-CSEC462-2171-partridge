@@ -29,7 +29,7 @@ function addFQDN($argFQDN, $argRep, $mysqli) {
 		echo "The domain given does not appear to be valid. No FQDN added." . PHP_EOL;
 		echo "Got: " . $argFQDN . PHP_EOL;
 	} else {
-		$dbInsertNewFQDN = $mysqli->query("INSERT INTO `Reputation` (`FQDN`, `Domain`, `Source`) VALUES ('" . $argFQDN . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $argRep . "')");
+		$dbInsertNewFQDN = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedFQDN["subdomain"] . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $argRep . "')");
 
 		if(!$dbInsertNewFQDN) {
 			echo "There was an error running the insert query. No FQDN added." . PHP_EOL;
