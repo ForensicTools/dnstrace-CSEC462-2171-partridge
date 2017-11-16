@@ -23,7 +23,7 @@ if(count($argv) == 2) {
 }
 
 function addFQDN($argFQDN, $argRep, $mysqli) {
-	$parsedFQDN = tld_extract($argFQDN, Extract::MODE_ALLOW_ICANN);
+	$parsedFQDN = tld_extract($argFQDN);
 
 	if(!$parsedFQDN->isValidDomain()) {
 		echo "The domain given does not appear to be valid. No FQDN added." . PHP_EOL;

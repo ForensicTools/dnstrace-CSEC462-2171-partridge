@@ -44,7 +44,7 @@ if($gdnsResAAAA[0]) {
 $gdnsResCNAME = gdnsGetGeneral($parsedDomain->getFullHost(), "CNAME");
 if($gdnsResCNAME[0]) {
 	foreach($gdnsResCNAME[1] as $rawResult) {
-		$parsedRes = tld_extract($rawResult, Extract::MODE_ALLOW_ICANN);
+		$parsedRes = tld_extract($rawResult);
 		if($parsedRes->isValidDomain()) {
 			$ans = rtrim($parsedRes->getFullHost(), ".");
 			$mysqli->query("INSERT INTO `DNS_CNAME` (Subdomain, Domain, CNAME, Current) VALUES ('".$parsedDomain["subdomain"]."', '".$parsedDomain->getRegistrableDomain()."', '".$ans."', 1)");
@@ -60,9 +60,9 @@ if($gdnsResMX[0]) {
 	foreach($gdnsResMX[1] as $rawResult) {
 		$arrRes = explode(" ", $rawResult);
 		if(count($arrRes) == 1) {
-			$parsedRes = tld_extract(rtrim($arrRes[0], "."), Extract::MODE_ALLOW_ICANN);
+			$parsedRes = tld_extract(rtrim($arrRes[0], "."));
 		} else {
-			$parsedRes = tld_extract(rtrim($arrRes[1], "."), Extract::MODE_ALLOW_ICANN);
+			$parsedRes = tld_extract(rtrim($arrRes[1], "."));
 		}
 		$ans = $parsedRes->getFullHost();
 		$mysqli->query("INSERT INTO `DNS_MX` (Subdomain, Domain, MX_Subdomain, MX_Domain, Current) VALUES ('".$parsedDomain["subdomain"]."', '".$parsedDomain->getRegistrableDomain()."', '".$parsedRes["subdomain"]."', '".$parsedRes->getRegistrableDomain()."', 1)");
@@ -75,7 +75,7 @@ if($gdnsResMX[0]) {
 $gdnsResNS = gdnsGetGeneral($parsedDomain->getFullHost(), "NS");
 if($gdnsResNS[0]) {
 	foreach($gdnsResNS[1] as $rawResult) {
-		$parsedRes = tld_extract(rtrim($rawResult, "."), Extract::MODE_ALLOW_ICANN);
+		$parsedRes = tld_extract(rtrim($rawResult, "."));
 		if($parsedRes->isValidDomain()) {
 			$ans = $parsedRes->getFullHost();
 			$mysqli->query("INSERT INTO `DNS_NS` (Subdomain, Domain, NS_Subdomain, NS_Domain, Current) VALUES ('".$parsedDomain["subdomain"]."', '".$parsedDomain->getRegistrableDomain()."', '".$parsedRes["subdomain"]."', '".$parsedRes->getRegistrableDomain()."', 1)");

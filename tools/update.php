@@ -27,9 +27,9 @@ while($row = $allDomains->fetch_assoc()) {
 		
 		if($maxWkr > $currentCtr) {
 			if(strlen($row["Subdomain"]) > 0) {
-				$parsedRow = tld_extract($row["Subdomain"] . "." . $row["Domain"], Extract::MODE_ALLOW_ICANN);
+				$parsedRow = tld_extract($row["Subdomain"] . "." . $row["Domain"]);
 			} else {
-				$parsedRow = tld_extract($row["Domain"], Extract::MODE_ALLOW_ICANN);
+				$parsedRow = tld_extract($row["Domain"]);
 			}
 			
 			exec("php worker.php \"" . $parsedRow->getFullHost() . "\" > /dev/null &");
