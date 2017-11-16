@@ -27,10 +27,12 @@ while($row = $allDomains->fetch_assoc()) {
 		
 		if($maxWkr > $currentCtr) {
 			if(strlen($row["Subdomain"]) > 0) {
-				$parsedRow = tld_extract($row["Subdomain"] . "." . $row["Domain"]);
+				$parsedRow = tld_extract($row["Subdomain"] . "." . $row["Domain"], Extract::MODE_ALLOW_ICANN);
 			} else {
-				$parsedRow = tld_extract($row["Domain"]);
+				$parsedRow = tld_extract($row["Domain"], Extract::MODE_ALLOW_ICANN);
 			}
+			
+			exec("php worker.php \"" . $parsedRow->getFullHost() . "\" > /dev/null &");
 			
 			if(strlen($parsedRow->getFullHost()) > 60) {
 				$disp = "... " . substr($parsedRow->getFullHost(), strlen($parsedRow->getFullHost()) - 60, strlen($parsedRow->getFullHost()));
@@ -38,8 +40,8 @@ while($row = $allDomains->fetch_assoc()) {
 				$disp = $parsedRow->getFullHost();
 			}
 			
-			exec("php worker.php \"" . $parsedRow->getFullHost() . "\" > /dev/null &");
-			echo "Assigned worker to " . $disp . PHP_EOL;
+			echo "(".$currentCtr."/".$maxWkr.") assigned worker to " . $disp . PHP_EOL;
+			
 			$mysqli->query("UPDATE `Worker` SET Count = Count + 1");
 			$stay = false;
 		} else {
