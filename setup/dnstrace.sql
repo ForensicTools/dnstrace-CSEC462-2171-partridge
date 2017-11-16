@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `DNS_A` (
   `Domain` varchar(255) DEFAULT NULL,
   `IPv4` varchar(16) DEFAULT NULL,
   `Current` bit(1) DEFAULT NULL,
+  UNIQUE KEY `UNIQ_DATA` (`Subdomain`,`Domain`,`IPv4`),
   KEY `Domain` (`Domain`),
   CONSTRAINT `A_REP` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='type 1';
@@ -29,26 +30,42 @@ CREATE TABLE IF NOT EXISTS `DNS_AAAA` (
   `Domain` varchar(255) DEFAULT NULL,
   `IPv6` varchar(40) DEFAULT NULL,
   `Current` bit(1) DEFAULT NULL,
+  UNIQUE KEY `UNIQ_DATA` (`Subdomain`,`Domain`,`IPv6`),
   KEY `Domain` (`Domain`),
   CONSTRAINT `DNS_AAAA_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 28';
+
+-- Dumping structure for table dnstrace.DNS_CNAME
+CREATE TABLE IF NOT EXISTS `DNS_CNAME` (
+  `Subdomain` varchar(255) DEFAULT NULL,
+  `Domain` varchar(255) DEFAULT NULL,
+  `CNAME` varchar(40) DEFAULT NULL,
+  `Current` bit(1) DEFAULT NULL,
+  UNIQUE KEY `UNIQ_DATA` (`Subdomain`,`Domain`,`CNAME`),
+  KEY `Domain` (`Domain`),
+  CONSTRAINT `DNS_CNAME_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 28';
 
 -- Dumping structure for table dnstrace.DNS_MX
 CREATE TABLE IF NOT EXISTS `DNS_MX` (
   `Subdomain` varchar(255) DEFAULT NULL,
   `Domain` varchar(255) DEFAULT NULL,
-  `MX` varchar(255) DEFAULT NULL,
+  `MX_Subdomain` varchar(255) DEFAULT NULL,
+  `MX_Domain` varchar(255) DEFAULT NULL,
   `Current` bit(1) DEFAULT NULL,
+  UNIQUE KEY `UNIQ_DATA` (`Subdomain`,`Domain`,`MX_Subdomain`,`MX_Domain`),
   KEY `Domain` (`Domain`),
   CONSTRAINT `DNS_MX_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 15';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 2';
 
 -- Dumping structure for table dnstrace.DNS_NS
 CREATE TABLE IF NOT EXISTS `DNS_NS` (
   `Subdomain` varchar(255) DEFAULT NULL,
   `Domain` varchar(255) DEFAULT NULL,
-  `NS` varchar(255) DEFAULT NULL,
+  `NS_Subdomain` varchar(255) DEFAULT NULL,
+  `NS_Domain` varchar(255) DEFAULT NULL,
   `Current` bit(1) DEFAULT NULL,
+  UNIQUE KEY `UNIQ_DATA` (`Subdomain`,`Domain`,`NS_Subdomain`,`NS_Domain`),
   KEY `Domain` (`Domain`),
   CONSTRAINT `DNS_NS_ibfk_1` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC COMMENT='type 2';
@@ -58,10 +75,8 @@ CREATE TABLE IF NOT EXISTS `Reputation` (
   `Subdomain` varchar(255) DEFAULT NULL,
   `Domain` varchar(255) DEFAULT NULL,
   `Source` varchar(255) DEFAULT NULL,
-  `LastUpdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `ReputationDomain` (`Domain`),
   KEY `ReputationSource` (`Source`),
-  KEY `LastUpdated` (`LastUpdated`),
   CONSTRAINT `REP-SRC` FOREIGN KEY (`Source`) REFERENCES `Sources` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For to-add and reputation lookups';
 
@@ -104,6 +119,11 @@ CREATE TABLE IF NOT EXISTS `WHOIS_General` (
   KEY `WhoisDomainKey` (`Domain`),
   CONSTRAINT `WHO-REP` FOREIGN KEY (`Domain`) REFERENCES `Reputation` (`Domain`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Dumping structure for table dnstrace.Worker
+CREATE TABLE IF NOT EXISTS `Worker` (
+  `Count` int(11) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=latin1;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
