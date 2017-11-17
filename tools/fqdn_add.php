@@ -26,7 +26,7 @@ if(count($argv) == 2) {
 
 function addFQDN($argFQDN, $argRep, $mysqli) {
 	$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
-	$parsedFQDN = $ext->parse($argv[1]);
+	$parsedFQDN = $ext->parse($argFQDN);
 
 
 	if(!$parsedFQDN->isValidDomain()) {

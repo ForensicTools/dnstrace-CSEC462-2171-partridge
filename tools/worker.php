@@ -46,11 +46,10 @@ if($gdnsResAAAA[0]) {
 $gdnsResCNAME = gdnsGetGeneral($parsedDomain->getFullHost(), "CNAME");
 if($gdnsResCNAME[0]) {
 	foreach($gdnsResCNAME[1] as $rawResult) {
-		$parsedRes = $ext->parse($rawResult);
+		$parsedRes = $ext->parse(rtrim($rawResult, "."));
 		if($parsedRes->isValidDomain()) {
-			$ans = rtrim($parsedRes->getFullHost(), ".");
-			$mysqli->query("INSERT INTO `DNS_CNAME` (Subdomain, Domain, CNAME, Current) VALUES ('".$parsedDomain["subdomain"]."', '".$parsedDomain->getRegistrableDomain()."', '".$ans."', 1)");
-			echo "   " . $ans . PHP_EOL;
+			$mysqli->query("INSERT INTO `DNS_CNAME` (Subdomain, Domain, CNAME, Current) VALUES ('".$parsedDomain["subdomain"]."', '".$parsedDomain->getRegistrableDomain()."', '".$parsedRes->getFullHost()."', 1)");
+			echo "   " . $parsedRes->getFullHost() . PHP_EOL;
 		}
 	}
 } else {
