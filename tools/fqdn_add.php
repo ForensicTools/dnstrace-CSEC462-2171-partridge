@@ -16,6 +16,8 @@ if(count($argv) <= 1 || count($argv) >= 4) {
 	include "inc/exit.php";
 }
 
+use LayerShifter\TLDExtract\Extract;
+
 if(count($argv) == 2) {
 	$argRep = "USERADD";
 } else {
@@ -23,7 +25,9 @@ if(count($argv) == 2) {
 }
 
 function addFQDN($argFQDN, $argRep, $mysqli) {
-	$parsedFQDN = tld_extract($argFQDN);
+	$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
+	$parsedFQDN = $ext->parse($argv[1]);
+
 
 	if(!$parsedFQDN->isValidDomain()) {
 		echo "The domain given does not appear to be valid. No FQDN added." . PHP_EOL;
