@@ -14,6 +14,8 @@ if(count($argv) != 2) {
 	include "inc/exit.php";
 }
 
+use LayerShifter\TLDExtract\Extract;
+
 $maxWkr = intval($argv[1]);
 $mysqli->query("TRUNCATE `Worker`");
 $mysqli->query("INSERT INTO `Worker` (Count) VALUES(0)");
@@ -26,10 +28,12 @@ while($row = $allDomains->fetch_assoc()) {
 		$currentCtr = $dbWorker->fetch_assoc()["Count"];
 		
 		if($maxWkr > $currentCtr) {
+			$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
+			
 			if(strlen($row["Subdomain"]) > 0) {
-				$parsedRow = tld_extract($row["Subdomain"] . "." . $row["Domain"]);
+				$parsedRow = $ext->parse($row["Subdomain"] . "." . $row["Domain"]);
 			} else {
-				$parsedRow = tld_extract($row["Domain"]);
+				$parsedRow = $ext->parse($row["Domain"]);
 			}
 			
 			exec("php worker.php \"" . $parsedRow->getFullHost() . "\" > /dev/null &");

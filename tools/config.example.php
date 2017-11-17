@@ -21,7 +21,7 @@ $configDbPass = "____________"; // dnstrace *ADMINISTRATIVE* password
 //    DATABASE
 $configDbDb = "dnstrace"; // database to use
 //    DEPENDENCIES
-$configDepWhois = $currentDirectory . "../deps/python-whois/pwhois"; // full path to pwhois
+$configDepWhois = $currentDirectory . "/../deps/python-whois/pwhois"; // full path to pwhois
 // YOU PROBABLY DON'T HAVE TO EDIT THESE
 
 

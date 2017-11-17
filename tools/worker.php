@@ -15,7 +15,9 @@ if(count($argv) != 2) {
 	include "inc/exit.php";
 }
 
-$parsedDomain = tld_extract($argv[1]);
+use LayerShifter\TLDExtract\Extract;
+$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
+$parsedDomain = $ext->parse($argv[1]);
 
 $gdnsResA = gdnsGetGeneral($parsedDomain->getFullHost(), "A");
 if($gdnsResA[0]) {
@@ -84,6 +86,14 @@ if($gdnsResNS[0]) {
 	}
 } else {
 	echo "   No NS records" . PHP_EOL;
+}
+
+if(strcmp($parsedDomain->getFullHost(), $parsedDomain->getRegistrableDomain()) === 0) {
+	// WHOIS PENDING
+	//$pythonWhois = json_decode(exec($configDepWhois . " -j " . $parsedDomain->getFullHost()), true);
+	//var_dump($pythonWhois);
+} else {
+	echo "   Not eligible for WHOIS" . PHP_EOL;
 }
 
 $mysqli->query("UPDATE `Worker` SET Count = Count - 1");
