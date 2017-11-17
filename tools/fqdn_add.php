@@ -24,7 +24,7 @@ if(count($argv) == 2) {
 	$argRep = strtoupper($argv[2]);
 }
 
-function addFQDN($argFQDN, $argRep, $mysqli) {
+function addFQDN($argFQDN, $argRep, $mysqli, $disp) {
 	$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 	$parsedFQDN = $ext->parse($argFQDN);
 
@@ -38,7 +38,7 @@ function addFQDN($argFQDN, $argRep, $mysqli) {
 		if(!$dbInsertNewFQDN) {
 			echo "There was an error running the insert query. No FQDN added." . PHP_EOL;
 			echo "SQL error information: " . $mysqli->error . PHP_EOL;
-		} else {
+		} elseif($disp) {
 			echo "Added \"" . $argFQDN . "\" with flag " . $argRep . PHP_EOL;
 		}
 	}
@@ -53,6 +53,7 @@ if($dbCheckSrcRepExists->num_rows != 1) {
 if(file_exists($argv[1])) {
 	$fileName = $argv[1];
 	$fileHandle = fopen($fileName, "r");
+	echo "Adding many..." . PHP_EOL;
 
 	while (!feof($fileHandle)) {
 		$lineRaw = fgets($fileHandle);
@@ -62,13 +63,13 @@ if(file_exists($argv[1])) {
 			continue;
 		}
 		
-		addFQDN($lineClean, $argRep, $mysqli);
+		addFQDN($lineClean, $argRep, $mysqli, false);
 	}
 
 	fclose($fileHandle);
 } else {
 	$argFQDN = $argv[1];
-	addFQDN($argFQDN, $argRep, $mysqli);
+	addFQDN($argFQDN, $argRep, $mysqli, true);
 }
 
 include "inc/exit.php";
