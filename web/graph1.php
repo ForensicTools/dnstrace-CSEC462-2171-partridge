@@ -36,6 +36,11 @@ if(strlen($lookupFQDN["subdomain"]) > 0) {
 			$buildReturnable["ExactMatch"] = true;
 		}
 	}
+	if(!$buildReturnable["ExactMatch"]) {
+		$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
+	} else {
+		$buildReturnable["FQDN"] = $lookupFQDN["subdomain"] . "." . $lookupFQDN->getRegistrableDomain();
+	}
 } else {
 	$buildReturnable["ExactMatch"] = true;
 	$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
