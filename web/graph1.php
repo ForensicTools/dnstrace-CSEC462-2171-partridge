@@ -29,11 +29,12 @@ $buildReturnable = [];
 $buildReturnable["Success"] = true;
 
 $dbResReputation = [];
+$totalReputation = 0;
 while($row = $allLookups->fetch_assoc()) {
 	$dbResReputation[] = $row;
+	$totalReputation += intval($row["Score"]);
 }
-
-var_dump($dbResReputation);
+$buildReturnable["TotalRep"] = $totalReputation;
 
 $buildReturnable["ExactMatch"] = false;
 if(strlen($lookupFQDN["subdomain"]) > 0) {
