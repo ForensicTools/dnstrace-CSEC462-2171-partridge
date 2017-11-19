@@ -34,7 +34,7 @@ while($row = $allLookups->fetch_assoc()) {
 	$dbResReputation[] = $row;
 	$totalReputation += intval($row["Score"]);
 }
-$buildReturnable["TotalRep"] = $totalReputation;
+$buildReturnable["DomainReputation"] = $totalReputation;
 
 $buildReturnable["ExactMatch"] = false;
 if(strlen($lookupFQDN["subdomain"]) > 0) {
@@ -52,6 +52,8 @@ if(strlen($lookupFQDN["subdomain"]) > 0) {
 	$buildReturnable["ExactMatch"] = true;
 	$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
 }
+
+
 
 echo json_encode($buildReturnable);
 ?>
