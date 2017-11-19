@@ -20,7 +20,7 @@ if(!$lookupFQDN->isValidDomain()) {
 
 $allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
 
-if($mysqli_num_rows($allLookups) == 0) {
+if(mysqli_num_rows($allLookups) == 0) {
 	echo json_encode(array("Success" => false, "Reason" => "Domain not in database"));
 	exit();
 }
