@@ -14,8 +14,8 @@ if(!$lookupFQDN->isValidDomain()) {
 	exit();
 }
 
-$doesExistPls = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$parsedFQDN->getRegistrableDomain()."'");
+$allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
 
-while($row = $allDomains->fetch_assoc()) {
+while($row = $allLookups->fetch_assoc()) {
 	echo $row["Subdomain"] . "." . $row["Domain"] . " found " . PHP_EOL;
 }
