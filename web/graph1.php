@@ -18,7 +18,7 @@ if(!$lookupFQDN->isValidDomain()) {
 	exit();
 }
 
-$allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
+$allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."' LEFT JOIN ON `Reputation`.`Source`=`Sources`.`ID`");
 
 if(mysqli_num_rows($allLookups) == 0) {
 	echo json_encode(array("Success" => false, "Reason" => "Domain not in database"));
@@ -33,10 +33,12 @@ while($row = $allLookups->fetch_assoc()) {
 	$dbResReputation[] = $row;
 }
 
+var_dump($dbResReputation);
+
 $buildReturnable["ExactMatch"] = false;
 if(strlen($lookupFQDN["subdomain"]) > 0) {
 	foreach($dbResReputation as $row) {
-		if(strcmp($row["subdomain"], $lookupFQDN["subdomain"]) === 0) {
+		if(strcmp($row["Subdomain"], $lookupFQDN["subdomain"]) === 0) {
 			$buildReturnable["ExactMatch"] = true;
 		}
 	}
@@ -50,6 +52,5 @@ if(strlen($lookupFQDN["subdomain"]) > 0) {
 	$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
 }
 
-var_dump($buildReturnable);
-
+echo json_encode($buildReturnable);
 ?>
