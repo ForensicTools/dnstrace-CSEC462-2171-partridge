@@ -3,6 +3,10 @@
  * First degree graph generation from single starting point.
  */
 
+// FOR TEMPORARY DEBUGGING
+ini_set('display_errors', '1');
+// PLEASE REMOVE LATER
+
 include "inc/setup.php";
 use LayerShifter\TLDExtract\Extract;
 
