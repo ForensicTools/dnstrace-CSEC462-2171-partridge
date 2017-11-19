@@ -10,12 +10,37 @@ $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 $lookupFQDN = $ext->parse(mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["domain"])));
 
 if(!$lookupFQDN->isValidDomain()) {
-	echo json_encode(array("success" => false, "reason" => "Invalid domain"));
+	echo json_encode(array("Success" => false, "Reason" => "Invalid domain"));
 	exit();
 }
 
 $allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
 
-while($row = $allLookups->fetch_assoc()) {
-	echo $row["Subdomain"] . "." . $row["Domain"] . " found " . PHP_EOL;
+if($mysqli_num_rows($allLookups) == 0) {
+	echo json_encode(array("Success" => false, "Reason" => "Domain not in database"));
+	exit();
 }
+
+$buildReturnable = [];
+$buildReturnable["Success"] = true;
+
+$dbResReputation = [];
+while($row = $allLookups->fetch_assoc()) {
+	$dbResReputation[] = $row;
+}
+
+$buildReturnable["ExactMatch"] = false;
+if(strlen($lookupFQDN["subdomain"]) > 0) {
+	foreach($dbResReputation as $row) {
+		if(strcmp($row["subdomain"], $lookupFQDN["subdomain"]) === 0) {
+			$buildReturnable["ExactMatch"] = true;
+		}
+	}
+} else {
+	$buildReturnable["ExactMatch"] = true;
+	$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
+}
+
+var_dump($buildReturnable);
+
+?>
