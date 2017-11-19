@@ -18,7 +18,7 @@ if(!$lookupFQDN->isValidDomain()) {
 	exit();
 }
 
-$allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."' LEFT JOIN ON `Reputation`.`Source`=`Sources`.`ID`");
+$allLookups = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."' LEFT JOIN `Sources` ON `Reputation`.`Source`=`Sources`.`ID`");
 
 if(mysqli_num_rows($allLookups) == 0) {
 	echo json_encode(array("Success" => false, "Reason" => "Domain not in database"));
