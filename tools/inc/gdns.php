@@ -17,18 +17,18 @@ function gdnsExecute($domain, $qtype) {
 	$err = curl_error($ch);
 	
 	if($err) {
-		trigger_error("Detected CURL error when querying GDNS", E_USER_WARNING);
+		//trigger_error("Detected CURL error when querying GDNS", E_USER_WARNING);
 		return [false, $err];
 	} else {
 		$json = json_decode($response, true);
 		
 		if(!$json) {
-			trigger_error("Detected JSON response invalid from GDNS", E_USER_WARNING);
+			//trigger_error("Detected JSON response invalid from GDNS", E_USER_WARNING);
 			return [false, $response];
 		}
 		
 		if($json["Status"] != 0) {
-			trigger_error("Detected DNS error response code from GDNS - got " . $json["Status"], E_USER_WARNING);
+			//trigger_error("Detected DNS error response code from GDNS - got " . $json["Status"], E_USER_WARNING);
 			return [false, $json];
 		}
 		
@@ -36,26 +36,16 @@ function gdnsExecute($domain, $qtype) {
 	}
 }
 
-function gdnsGetSOA($domain) {
-	$ret = gdnsExecute($domain, "SOA");
+function gdnsGetGeneral($domain, $qtype) {
+	$ret = gdnsExecute($domain, $qtype);
+	$retArr = [];
 	
 	if($ret[0]) {
 		if(array_key_exists("Answer", $ret[1])) {
 			foreach($ret[1]["Answer"] as $retAns) {
-				$thisAns = rtrim($retAns["name"], ".");
-				if(strcmp($thisAns, $domain) != 0) {
-					return [true, $thisAns];
-				}
+				$retArr[] = $retAns["data"];
 			}
-			return [true, rtrim($ret[1]["Answer"][0]["name"], ".")];
-		} elseif(array_key_exists("Authority", $ret[1])) {
-			foreach($ret[1]["Authority"] as $retAns) {
-				$thisAns = rtrim($retAns["name"], ".");
-				if(strcmp($thisAns, $domain) != 0) {
-					return [true, $thisAns];
-				}
-			}
-			return [true, rtrim($ret[1]["Authority"][0]["name"], ".")];
+			return [true, $retArr];
 		} else {
 			return [false, $ret[1]];
 		}
