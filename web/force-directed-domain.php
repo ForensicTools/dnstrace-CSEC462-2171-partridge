@@ -110,7 +110,7 @@ foreach($preNodes as $node) { // placeholder
 	$node[] = array(
 		"id" => $node,
 		"group" => 1
-	)
+	);
 }
 $buildReturnable["Data"] = array("nodes" => $nodes, "links" => $links); // testing
 
