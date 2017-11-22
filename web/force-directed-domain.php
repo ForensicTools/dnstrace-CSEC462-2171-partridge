@@ -13,6 +13,14 @@ use LayerShifter\TLDExtract\Extract;
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 $lookupFQDN = $ext->parse(mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["domain"])));
 
+function fixDomain($subdomain, $domain) {
+	if(strlen($subdomain) > 0) {
+		return $subdomain . "." . $domain;
+	} else {
+		return $domain;
+	}
+}
+
 $preNodes = [];
 $nodes = [];
 $links = [];
@@ -49,7 +57,7 @@ $reducer = [];
 while($row = $dbGet->fetch_assoc()) {
 	$preNodes[] = $row["IPv4"];
 	$links[] = array(
-		"source" => $row["Subdomain"] . "." . $row["Domain"],
+		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
 		"target" => $row["IPv4"],
 		"value" => 4); // tuning?
 	$reducer[] = $row["IPv4"];
@@ -60,14 +68,10 @@ foreach($reducer as $IPv4Addr) {
 	$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `IPv4` = '" . $IPv4Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 	
 	while($row = $dbGet->fetch_assoc()) {
-		if(strlen($row["Subdomain"]) > 1) {
-			$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
-		} else {
-			$preNodes[] = $row["Domain"];
-		}
+		$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 		$links[] = array(
 			"source" => $row["IPv4"],
-			"target" => $row["Subdomain"] . "." . $row["Domain"],
+			"target" => fixDomain($row["Subdomain"], $row["Domain"]),
 			"value" => 4); // tuning?
 	}
 }
@@ -80,7 +84,7 @@ $reducer = [];
 while($row = $dbGet->fetch_assoc()) {
 	$preNodes[] = $row["IPv6"];
 	$links[] = array(
-		"source" => $row["Subdomain"] . "." . $row["Domain"],
+		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
 		"target" => $row["IPv6"],
 		"value" => 6); // tuning?
 	$reducer[] = $row["IPv6"];
@@ -91,14 +95,10 @@ foreach($reducer as $IPv6Addr) {
 	$dbGet = $mysqli->query("SELECT * FROM `DNS_AAAA` WHERE `IPv6` = '" . $IPv6Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 	
 	while($row = $dbGet->fetch_assoc()) {
-		if(strlen($row["Subdomain"]) > 1) {
-			$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
-		} else {
-			$preNodes[] = $row["Domain"];
-		}
+		$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 		$links[] = array(
 			"source" => $row["IPv6"],
-			"target" => $row["Subdomain"] . "." . $row["Domain"],
+			"target" => fixDomain($row["Subdomain"], $row["Domain"]),
 			"value" => 6); // tuning?
 	}
 }
@@ -111,7 +111,7 @@ $reducer = [];
 while($row = $dbGet->fetch_assoc()) {
 	$preNodes[] = $row["CNAME"];
 	$links[] = array(
-		"source" => $row["Subdomain"] . "." . $row["Domain"],
+		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
 		"target" => $row["CNAME"],
 		"value" => 7); // tuning?
 	$reducer[] = $row["CNAME"];
@@ -122,14 +122,10 @@ foreach($reducer as $CNAME) {
 	$dbGet = $mysqli->query("SELECT * FROM `DNS_CNAME` WHERE `CNAME` = '" . $CNAME . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 	
 	while($row = $dbGet->fetch_assoc()) {
-		if(strlen($row["Subdomain"]) > 1) {
-			$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
-		} else {
-			$preNodes[] = $row["Domain"];
-		}
+		$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 		$links[] = array(
 			"source" => $row["CNAME"],
-			"target" => $row["Subdomain"] . "." . $row["Domain"],
+			"target" => fixDomain($row["Subdomain"], $row["Domain"]),
 			"value" => 7); // tuning?
 	}
 }
