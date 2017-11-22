@@ -107,7 +107,7 @@ foreach($reducer as $IPv6Addr) {
 // cleanup
 $preNodes = array_unique($preNodes);
 foreach($preNodes as $node) { // placeholder
-	$node[] = array(
+	$nodes[] = array(
 		"id" => $node,
 		"group" => 1
 	);
