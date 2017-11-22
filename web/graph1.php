@@ -18,9 +18,9 @@ if(!$lookupFQDN->isValidDomain()) {
 	exit();
 }
 
-$allLookups = $mysqli->query("SELECT * FROM `Reputation` LEFT JOIN `Sources` ON `Reputation`.`Source`=`Sources`.`ID` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
+$dbGet = $mysqli->query("SELECT * FROM `Reputation` LEFT JOIN `Sources` ON `Reputation`.`Source`=`Sources`.`ID` WHERE `Domain` = '".$lookupFQDN->getRegistrableDomain()."'");
 
-if(mysqli_num_rows($allLookups) == 0) {
+if(mysqli_num_rows($dbGet) == 0) {
 	echo json_encode(array("Success" => false, "Reason" => "Domain not in database"));
 	exit();
 }
@@ -30,7 +30,7 @@ $buildReturnable["Success"] = true;
 
 $dbResReputation = [];
 $totalReputation = 0;
-while($row = $allLookups->fetch_assoc()) {
+while($row = $dbGet->fetch_assoc()) {
 	$dbResReputation[] = $row;
 	$totalReputation += intval($row["Score"]);
 }
@@ -44,16 +44,31 @@ if(strlen($lookupFQDN["subdomain"]) > 0) {
 		}
 	}
 	if(!$buildReturnable["ExactMatch"]) {
+		$buildReturnable["Domain"] = $lookupFQDN->getRegistrableDomain();
 		$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
 	} else {
+		$buildReturnable["Domain"] = $lookupFQDN->getRegistrableDomain();
 		$buildReturnable["FQDN"] = $lookupFQDN["subdomain"] . "." . $lookupFQDN->getRegistrableDomain();
 	}
 } else {
 	$buildReturnable["ExactMatch"] = true;
+	$buildReturnable["Domain"] = $lookupFQDN->getRegistrableDomain();
 	$buildReturnable["FQDN"] = $lookupFQDN->getRegistrableDomain();
 }
 
+// A record lookup time (yay)
+$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `Domain` = '".$buildReturnable["Domain"]."'");
 
+$dbResIPv4 = [];
+while($row = $dbGet->fetch_assoc()) {
+	$dbResIPv4[] = $row["IPv4"];
+}
+$dbResIPv4 = array_unique($dbResIPv4);
+
+
+foreach($dbResIPv4 as $IPv4Addr) {
+	
+}
 
 echo json_encode($buildReturnable);
 ?>
