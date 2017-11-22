@@ -43,7 +43,7 @@ while($row = $dbGet->fetch_assoc()) {
 }
 
 // A record lookup time (yay)
-$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `Domain` = '".$buildReturnable["Domain"]."'");
+$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
 
 $reducer = [];
 while($row = $dbGet->fetch_assoc()) {
@@ -57,7 +57,7 @@ while($row = $dbGet->fetch_assoc()) {
 $reducer = array_unique($reducer);
 
 foreach($reducer as $IPv4Addr) {
-	$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `IPv4` = '".$IPv4Addr."'");
+	$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `IPv4` = '" . $IPv4Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 	
 	while($row = $dbGet->fetch_assoc()) {
 		if(strlen($row["Subdomain"]) > 1) {
