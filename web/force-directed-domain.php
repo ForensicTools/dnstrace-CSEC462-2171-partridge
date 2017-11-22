@@ -42,7 +42,7 @@ while($row = $dbGet->fetch_assoc()) {
 	}
 }
 
-// A record lookup time (yay)
+// A RECORD LOOKUP SECTION
 $dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
 
 $reducer = [];
@@ -71,11 +71,48 @@ foreach($reducer as $IPv4Addr) {
 			"value" => 4); // tuning?
 	}
 }
+// A RECORD LOOKUP SECTION
 
+// AAAA RECORD LOOKUP SECTION
+$dbGet = $mysqli->query("SELECT * FROM `DNS_AAAA` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
+
+$reducer = [];
+while($row = $dbGet->fetch_assoc()) {
+	$preNodes[] = $row["IPv6"];
+	$links[] = array(
+		"source" => $row["Subdomain"] . "." . $row["Domain"],
+		"target" => $row["IPv6"],
+		"value" => 6); // tuning?
+	$reducer[] = $row["IPv6"];
+}
+$reducer = array_unique($reducer);
+
+foreach($reducer as $IPv6Addr) {
+	$dbGet = $mysqli->query("SELECT * FROM `DNS_AAAA` WHERE `IPv6` = '" . $IPv6Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
+	
+	while($row = $dbGet->fetch_assoc()) {
+		if(strlen($row["Subdomain"]) > 1) {
+			$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
+		} else {
+			$preNodes[] = $row["Domain"];
+		}
+		$links[] = array(
+			"source" => $row["IPv6"],
+			"target" => $row["Subdomain"] . "." . $row["Domain"],
+			"value" => 6); // tuning?
+	}
+}
+// AAAA RECORD LOOKUP SECTION
 
 // cleanup
 $preNodes = array_unique($preNodes);
-$buildReturnable["Data"] = [$preNodes, $links]; // testing
+foreach($preNodes as $node) { // placeholder
+	$node[] = array(
+		"id" => $node,
+		"group" => 1
+	)
+}
+$buildReturnable["Data"] = array("nodes" => $nodes, "links" => $links); // testing
 
 echo json_encode($buildReturnable);
 ?>
