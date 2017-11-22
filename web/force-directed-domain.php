@@ -104,6 +104,37 @@ foreach($reducer as $IPv6Addr) {
 }
 // AAAA RECORD LOOKUP SECTION
 
+// CNAME RECORD LOOKUP SECTION
+$dbGet = $mysqli->query("SELECT * FROM `DNS_CNAME` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
+
+$reducer = [];
+while($row = $dbGet->fetch_assoc()) {
+	$preNodes[] = $row["CNAME"];
+	$links[] = array(
+		"source" => $row["Subdomain"] . "." . $row["Domain"],
+		"target" => $row["CNAME"],
+		"value" => 7); // tuning?
+	$reducer[] = $row["CNAME"];
+}
+$reducer = array_unique($reducer);
+
+foreach($reducer as $CNAME) {
+	$dbGet = $mysqli->query("SELECT * FROM `DNS_CNAME` WHERE `CNAME` = '" . $CNAME . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
+	
+	while($row = $dbGet->fetch_assoc()) {
+		if(strlen($row["Subdomain"]) > 1) {
+			$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
+		} else {
+			$preNodes[] = $row["Domain"];
+		}
+		$links[] = array(
+			"source" => $row["CNAME"],
+			"target" => $row["Subdomain"] . "." . $row["Domain"],
+			"value" => 7); // tuning?
+	}
+}
+// CNAME RECORD LOOKUP SECTION
+
 // cleanup
 $preNodes = array_unique($preNodes);
 foreach($preNodes as $node) { // placeholder
