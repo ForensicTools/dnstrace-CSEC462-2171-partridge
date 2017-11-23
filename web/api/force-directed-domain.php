@@ -41,12 +41,11 @@ $buildReturnable = [];
 $buildReturnable["Success"] = true;
 
 while($row = $dbGet->fetch_assoc()) {
-	if(strlen($row["Subdomain"]) > 0) {
-		$preNodes[] = $row["Subdomain"] . "." . $row["Domain"];
-		$links[] = array(
-			"source" => $lookupFQDN->getRegistrableDomain(),
-			"target" => $row["Subdomain"] . "." . $row["Domain"],
-			"value" => 10); // tuning?
+	$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
+	$links[] = array(
+		"source" => $lookupFQDN->getRegistrableDomain(),
+		"target" => $row["Subdomain"] . "." . $row["Domain"],
+		"value" => 10); // tuning?
 	}
 }
 
