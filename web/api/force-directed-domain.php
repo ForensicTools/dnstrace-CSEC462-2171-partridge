@@ -37,6 +37,7 @@ if(mysqli_num_rows($dbGet) == 0) {
 	exit();
 }
 
+$preNodes[] = $lookupFQDN->getRegistrableDomain();
 $buildReturnable = [];
 $buildReturnable["Success"] = true;
 
@@ -44,9 +45,8 @@ while($row = $dbGet->fetch_assoc()) {
 	$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 	$links[] = array(
 		"source" => $lookupFQDN->getRegistrableDomain(),
-		"target" => $row["Subdomain"] . "." . $row["Domain"],
+		"target" => fixDomain($row["Subdomain"], $row["Domain"]),
 		"value" => 10); // tuning?
-	}
 }
 
 // A RECORD LOOKUP SECTION
