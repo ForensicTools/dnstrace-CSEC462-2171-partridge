@@ -193,7 +193,7 @@ foreach($preNodes as $node) { // placeholder
 		"group" => 1
 	);
 }
-$buildReturnable["Data"] = array("nodes" => $nodes, "links" => $links); // testing
+$buildReturnable = array("nodes" => $nodes, "links" => $links); // testing
 
 echo json_encode($buildReturnable);
 ?>
