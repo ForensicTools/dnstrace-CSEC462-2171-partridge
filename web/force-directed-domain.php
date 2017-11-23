@@ -140,20 +140,20 @@ while($row = $dbGet->fetch_assoc()) {
 	$links[] = array(
 		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
 		"target" => $row["MX"],
-		"value" => 7); // tuning?
+		"value" => 2); // tuning?
 	$reducer[] = $row["MX_Subdomain"] . "." . $row["MX_Domain"];
 }
 $reducer = array_unique($reducer);
 
 foreach($reducer as $MXD) {
-	$dbGet = $mysqli->query("SELECT * FROM `DNS_MX` WHERE `MX_Domain` + '.' + `MX_Domain` = '" . $MXD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
+	$dbGet = $mysqli->query("SELECT * FROM `DNS_MX` WHERE `MX_Subdomain` + '.' + `MX_Domain` = '" . $MXD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 	
 	while($row = $dbGet->fetch_assoc()) {
 		$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 		$links[] = array(
-			"source" => fixDomain($row["MX_Subdomain"], $row["MX_Domain"]);
+			"source" => fixDomain($row["MX_Subdomain"], $row["MX_Domain"]),
 			"target" => fixDomain($row["Subdomain"], $row["Domain"]),
-			"value" => 7); // tuning?
+			"value" => 2); // tuning?
 	}
 }
 // MX RECORD LOOKUP SECTION
