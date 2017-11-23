@@ -139,7 +139,7 @@ while($row = $dbGet->fetch_assoc()) {
 	$preNodes[] = fixDomain($row["MX_Subdomain"], $row["MX_Domain"]);
 	$links[] = array(
 		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
-		"target" => $row["MX"],
+		"target" => fixDomain($row["MX_Subdomain"], $row["MX_Domain"]),
 		"value" => 2); // tuning?
 	$reducer[] = $row["MX_Subdomain"] . "." . $row["MX_Domain"];
 }
