@@ -7,7 +7,7 @@
 ini_set('display_errors', '1');
 // PLEASE REMOVE LATER
 
-include "inc/setup.php";
+include "../inc/setup.php";
 use LayerShifter\TLDExtract\Extract;
 
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
