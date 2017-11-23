@@ -158,6 +158,33 @@ foreach($reducer as $MXD) {
 }
 // MX RECORD LOOKUP SECTION
 
+// NS RECORD LOOKUP SECTION
+$dbGet = $mysqli->query("SELECT * FROM `DNS_NS` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
+
+$reducer = [];
+while($row = $dbGet->fetch_assoc()) {
+	$preNodes[] = fixDomain($row["NS_Subdomain"], $row["NS_Domain"]);
+	$links[] = array(
+		"source" => fixDomain($row["Subdomain"], $row["Domain"]),
+		"target" => fixDomain($row["NS_Subdomain"], $row["NS_Domain"]),
+		"value" => 1); // tuning?
+	$reducer[] = $row["NS_Subdomain"] . "." . $row["NS_Domain"];
+}
+$reducer = array_unique($reducer);
+
+foreach($reducer as $NSD) {
+	$dbGet = $mysqli->query("SELECT * FROM `DNS_NS` WHERE CONCAT(`NS_Subdomain`, '.', `NS_Domain`) = '" . $NSD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
+	
+	while($row = $dbGet->fetch_assoc()) {
+		$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
+		$links[] = array(
+			"source" => fixDomain($row["NS_Subdomain"], $row["NS_Domain"]),
+			"target" => fixDomain($row["Subdomain"], $row["Domain"]),
+			"value" => 1); // tuning?
+	}
+}
+// NS RECORD LOOKUP SECTION
+
 // cleanup
 $preNodes = array_unique($preNodes);
 foreach($preNodes as $node) { // placeholder
