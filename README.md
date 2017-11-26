@@ -8,4 +8,4 @@ A project for CSEC 462 (Network Security and Forensics) at RIT in my junior year
 
 See SETUP.md in the root of the repo for setup instructions.
 
-However, it is inadvisable to set this up yourself, as it's a major resource-hog. I've made available a public instance of this at [https://dnstrace.pro](dnstrace.pro) that will be continually updated with as much data as my systems can handle. If you need additional access to that system for more complex analysis, please shoot me a message or an email and I'll get you an API key ASAP.
+However, it is inadvisable to set this up yourself, as it's a major resource-hog. I've made available a public instance of this at [dnstrace.pro](https://dnstrace.pro/) that will be continually updated with as much data as my systems can handle. If you need additional access to that system for more complex analysis, please shoot me a message or an email and I'll get you an API key ASAP.
