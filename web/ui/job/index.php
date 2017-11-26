@@ -2,9 +2,11 @@
 /* web/ui/job/index.php
  * Check the status of a given job and refresh occasionally.
  */
+ 
+include '../../base.php';
 
 $jobID = intval($_GET["id"]);
-$api = file_get_contents("https://dnstrace.pro/api/job_check.php?id=" . $jobID);
+$api = file_get_contents("https://" . $configWhoami . "/api/job_check.php?id=" . $jobID);
 
 $apiData = json_decode($api, true);
 

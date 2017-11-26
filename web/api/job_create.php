@@ -4,6 +4,7 @@
  */
 
 include "inc/setup.php";
+include '../../base.php';
 use LayerShifter\TLDExtract\Extract;
 
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
@@ -66,8 +67,8 @@ if(!$dbInsertJob) {
 
 if($_GET["ui"] == 1) {
 	echo '<!DOCTYPE html><html>';
-	echo '<head><meta http-equiv="refresh" content="0; url=https://dnstrace.pro/ui/job/?id='.$mysqli->insert_id.'" /></head>';
-	echo '<body><p><a href="https://dnstrace.pro/ui/job/?id='.$mysqli->insert_id.'">Click here to go to the status page if you are not automatically redirected.</a></p></body>';
+	echo '<head><meta http-equiv="refresh" content="0; url=https://' . $configWhoami . '/ui/job/?id='.$mysqli->insert_id.'" /></head>';
+	echo '<body><p><a href="https://' . $configWhoami . '/ui/job/?id='.$mysqli->insert_id.'">Click here to go to the status page if you are not automatically redirected.</a></p></body>';
 	echo '</html>';
 } else {
 	echo json_encode(array("Success" => true, "JobID" => $mysqli->insert_id));

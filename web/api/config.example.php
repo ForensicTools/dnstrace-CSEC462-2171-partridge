@@ -1,8 +1,8 @@
 <?php
-/* web/config.example.php
+/* web/api/config.example.php
  * Example configuration file.
  *
- * Copy to we/bconfig.php and edit the following to your spec.
+ * Copy to web/api/config.php and edit the following to your spec.
  * The mandatory fields to fill out are filled with underlines.
  */
 

@@ -61,7 +61,7 @@ var zoom = d3.behavior.zoom().scaleExtent([min_zoom,max_zoom])
 var g = svg.append("g");
 svg.style("cursor","move");
 
-d3.json("https://dnstrace.pro/api/jobs/<?php echo $_GET['job']; ?>.json", function(error, graph) {
+d3.json("https://<?php include '../../base.php'; echo $configWhoami; ?>/api/jobs/<?php echo $_GET['job']; ?>.json", function(error, graph) {
 
 var linkedByIndex = {};
     graph.links.forEach(function(d) {
