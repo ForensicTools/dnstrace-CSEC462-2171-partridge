@@ -4,7 +4,7 @@
  */
 
 include "inc/setup.php";
-include '../../base.php';
+include '../base.php';
 use LayerShifter\TLDExtract\Extract;
 
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);

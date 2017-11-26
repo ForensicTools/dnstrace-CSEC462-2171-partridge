@@ -1,6 +1,8 @@
 # dnstrace Setup
 
-## Database Setup
+For setup, we define three machines: your Database, an Administrative host, and a Webserver. Keep track of which one we're taking about - if there is the capacity for confusion, a note will be made in the title of a section to determine what machine we're taking about.
+
+## Database Setup (DB)
 
 ### Database
 
@@ -14,9 +16,9 @@ The nearly-read-only user should have SELECT access to the entire dnstrace datab
 
 It behooves you to create two seperate users that *only* have access in varying levels to the dnstrace database, as this software is under heavy development has not been audited by any third party. Vulnerabilities may appear and disappear at will. As 3OH!3 would say: DON'T TRUST ME.
 
-## Backend Setup
+## Backend Setup (Admin)
 
-### Composer (Tools)
+### Composer
 
 This project requires Composer for PHP-related package management. To prepare the environment, in this directory you should run the following command(s):
 
@@ -36,7 +38,7 @@ You can have them downloaded and installed automatically by running setup/deps.s
 
 Edit this file as needed to connect to the data backend as an administrative user as well as tune any preferences, before copying it to config.php. The sections that you need to edit should be easy to identify as they are flagged as such.
 
-## Frontend Setup
+## Frontend Setup (Web)
 
 ### Preparing Webserver
 
@@ -46,14 +48,26 @@ Move all files in web/ to the webserver root of your choice. Because I'm old-sch
 
 Edit this file as needed to connect to the data backend as a nearly-read-only user as well as specify the FQDN of the webserver, before copying it to config.php. The sections that you need to edit should be easy to identify as they are flagged as such.
 
-### web/base.php
+### web/base.example.php
 
-Set your FQDN and forget.
+Edit, set your FQDN, save to base.php, and forget.
 
-### Composer (Web)
+### Composer (Again)
 
 The web component of this project also requires Composer for PHP-related package management. To prepare the environment, in this directory you should run the following command in the api folder of your web root:
 
 * composer require layershifter/tld-extract
 
-### 9. 
+## Data Manipulation
+
+### Ingestion (Admin)
+
+You must create flags for each domain ingested using tools/rep_add.php before using tools/fqdn_add.php to ingest the necessary data. Running both of these tools without arguments will provide a verbose help dialogue to help you get started.
+
+### Acquisition (Admin)
+
+Run tools/update.php with as many threads as you'd like (see its help dialogue for assistance). A good rule of thumb here is the number of cores available on your management machine multiplied by eight. This will acquire data for all domains in the database, and may take some time.
+
+### Processing (Web)
+
+From a commandline (preferably screen) or in crontab (@reboot), run an instance of web/api/process-manager.php with as many concurrent threads as you'd like (see its help dialogue for assistance). More threads means more concurrent users can be served, but each thread will go slower as database load increases. A reasonable rule of thumb is the sum of your webserver and database cores.
