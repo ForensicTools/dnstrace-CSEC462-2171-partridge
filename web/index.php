@@ -3,10 +3,9 @@
 <title>dnstrace</title>
 </head>
 <body>
-<h3>dnstrace</h3>
+<h1>dnstrace</h1>
 <br>
 <p>A tool for inspecting the relationships between domains using graph databases.</p>
-<br>
 <p>Fill out the following form to create a graph database with the spec provided. Currently, the domain must exist within hpHosts blocklists.</p>
 <form action="https://dnstrace.pro/api/job_create.php">
 	Domain:<br>
@@ -31,6 +30,7 @@
 </form>
 <br>
 <p>Graph databases provided by <a href="https://bl.ocks.org/eyaler">eyaler</a>'s magnificent D3.js wizardry</p>
-<p>Developed by <a href="https://chris.partridge.tech/">Chris Partridge</a></p>
+<p>Everything else developed by <a href="https://chris.partridge.tech/">Chris Partridge</a></p>
+<p>This project is open source and available on <a href="https://github.com/tweedge/dnstrace/">GitHub</a></p>
 </body>
 </html>
