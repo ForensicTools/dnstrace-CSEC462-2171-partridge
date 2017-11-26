@@ -70,4 +70,4 @@ Run tools/update.php with as many threads as you'd like (see its help dialogue f
 
 ### Processing (Web)
 
-From a commandline (preferably screen) or in crontab (@reboot), run an instance of web/api/process-manager.php with as many concurrent threads as you'd like (see its help dialogue for assistance). More threads means more concurrent users can be served, but each thread will go slower as database load increases. A reasonable rule of thumb is the sum of your webserver and database cores.
+From a commandline (preferably screen) or in crontab (@reboot), run an instance of web/api/process_manager.php with as many concurrent threads as you'd like (see its help dialogue for assistance). More threads means more concurrent users can be served, but each thread will go slower as database load increases. A reasonable rule of thumb is the sum of your webserver and database cores.

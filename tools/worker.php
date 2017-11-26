@@ -1,6 +1,6 @@
 <?php
 /* tools/worker.php
- * 
+ * Update single FQDN using Google resolvers
  */
 
 include "inc/setup.php";
@@ -8,10 +8,10 @@ include "inc/gdns.php";
 
 if(count($argv) != 2) {
 	echo "dnstrace - worker.php" . PHP_EOL;
-	echo "  ." . PHP_EOL;
+	echo "  This shouldn't be invoked manually unless it's for debugging." . PHP_EOL;
 	echo PHP_EOL;
-	echo "Usage: php worker.php \"domain\"" . PHP_EOL;
-	echo "  ." . PHP_EOL;
+	echo "Usage: php worker.php \"FQDN\"" . PHP_EOL;
+	echo "  Given FQDN will be searched for using Google resolvers & its data saved." . PHP_EOL;
 	include "inc/exit.php";
 }
 

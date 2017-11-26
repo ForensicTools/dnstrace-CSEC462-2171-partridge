@@ -304,4 +304,6 @@ $mysqli->query("UPDATE `Processors` SET Count = Count - 1");
 $buildReturnable = array("graph" => array(), "links" => $links, "nodes" => $nodes);
 
 echo json_encode($buildReturnable);
+
+include "inc/exit.php";
 ?>

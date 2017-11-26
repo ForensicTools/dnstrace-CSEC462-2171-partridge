@@ -1,16 +1,17 @@
 <?php
 /* tools/update.php
- * 
+ * Execute a full domain database update.
  */
 
 include "inc/setup.php";
 
 if(count($argv) != 2) {
 	echo "dnstrace - update.php" . PHP_EOL;
-	echo "  ." . PHP_EOL;
+	echo "  Fetches data for all domains." . PHP_EOL;
+	echo "  Ideally, run this automatically off-use-hours for minimal business impact." . PHP_EOL;
 	echo PHP_EOL;
 	echo "Usage: php update.php [# of workers]" . PHP_EOL;
-	echo "  ." . PHP_EOL;
+	echo "  For maximum performance, the # of workers should be ~8x the # of cores available." . PHP_EOL;
 	include "inc/exit.php";
 }
 

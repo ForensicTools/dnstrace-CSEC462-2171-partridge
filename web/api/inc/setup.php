@@ -2,7 +2,7 @@
 /* web/inc/setup.php
  * Preparation script for web tools
  *
- * On success, initializes $mysqli, a connection to the user's RDBMS as admin.
+ * On success, initializes $mysqli, a connection to the user's RDBMS as unprivileged user.
  */
 
 if((@include "config.php") === false) {

@@ -18,3 +18,4 @@ if(mysqli_num_rows($dbGet) == 0) {
 }
 
 include 'inc/exit.php';
+?>

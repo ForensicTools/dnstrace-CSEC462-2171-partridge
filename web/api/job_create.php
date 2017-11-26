@@ -73,4 +73,6 @@ if($_GET["ui"] == 1) {
 } else {
 	echo json_encode(array("Success" => true, "JobID" => $mysqli->insert_id));
 }
+
+include "inc/exit.php";
 ?>
