@@ -53,7 +53,7 @@ if(file_exists($argv[1])) {
 					$queryValues[] = "('" . $parsedDomain["subdomain"] . "', '" . $parsedDomain->getRegistrableDomain() . "', '". $flag . "')";
 					$counter++;
 					
-					if($counter > 500) {
+					if($counter > 5000) {
 						$dbInsertNewDomain = $mysqli->query($queryBase . implode(',', $queryValues) . $queryPost);
 						if(!$dbInsertNewDomain) {
 							echo "There was an error running the insert query. No domain added." . PHP_EOL;
