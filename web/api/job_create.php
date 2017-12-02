@@ -73,7 +73,7 @@ if(mysqli_num_rows($dbGet) == 0) {
 	include "inc/exit.php";
 }
 
-$dbInsertJob = $mysqli->query("INSERT INTO `Jobs` (`Key`, `Domain`, `Degree`, `MXEN`, `NSEN`, `Exclude`) VALUES ('" . $jobKey . "', '" . $lookupFQDN->getRegistrableDomain() . "', " . $jobDegrees . ", " . $jobMXEN . ", ". $jobNSEN . ", ". $saveExcludes . ")");
+$dbInsertJob = $mysqli->query("INSERT INTO `Jobs` (`Key`, `Domain`, `Degree`, `MXEN`, `NSEN`, `Exclude`) VALUES ('" . $jobKey . "', '" . $lookupFQDN->getRegistrableDomain() . "', " . $jobDegrees . ", " . $jobMXEN . ", ". $jobNSEN . ", '". $saveExcludes . "')");
 
 if(!$dbInsertJob) {
 	echo json_encode(array("Success" => false, "Reason" => "Error interacting with database. Please contact the administrator."));
