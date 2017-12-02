@@ -28,7 +28,7 @@ if(file_exists($argv[1])) {
 		$lineRaw = fgets($fileHandle);
 		$lineClean = explode("\t", $lineRaw);
 		
-		if(count($lineClean[3]) > 3) {
+		if(count($lineClean) > 3) {
 			if(strcmp($lineClean[3], "ns") === 0) {
 				$fixedDomain = rtrim($lineClean[0], ".");
 				$parsedDomain = $ext->parse($fixedDomain);
@@ -49,12 +49,12 @@ if(file_exists($argv[1])) {
 	
 	$tempDomain = $listDomains[0];
 	$parsedDomain = $ext->parse($tempDomain);
-	$flag = "ZONE-" . strtoupper($tempDomain['suffix']);
-	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \'' . $tempDomain['suffix'] . '\' from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
+	$flag = "ZONE-" . strtoupper($parsedDomain["suffix"]);
+	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \'' . $parsedDomain["suffix"] . '\' from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
 
 	foreach($listDomains as $fixedDomain) {
 		$parsedDomain = $ext->parse($fixedDomain);
-		$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedFQDN["subdomain"] . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $flag . "')");
+		$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedDomain["subdomain"] . "', '" . $parsedDomain->getRegistrableDomain() . "', '". $flag . "')");
 
 		if(!$dbInsertNewDomain) {
 			echo "There was an error running the insert query. No domain added." . PHP_EOL;
