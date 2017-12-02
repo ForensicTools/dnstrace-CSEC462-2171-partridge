@@ -19,23 +19,37 @@ $maxWkr = intval($argv[1]);
 $mysqli->query("TRUNCATE `Worker_Zone`");
 $mysqli->query("INSERT INTO `Worker_Zone` (Count) VALUES(0)");
 
-$allDomains = $mysqli->query("SELECT * FROM `Reputation`");
-while($row = $allDomains->fetch_assoc()) {
+if(!chdir("../deps/czdap-tools/zonedata-download")) {
+	echo "czdap-tools does not exist, run setup/deps.sh." . PHP_EOL;
+	include "inc/exit.php";
+}
+
+exec("python download.py");
+if(!chdir("zonefiles")) {
+	echo "No zonefiles retrieved?" . PHP_EOL;
+	include "inc/exit.php";
+}
+
+exec("gunzip *");
+
+$fileList = [];
+$zoneDir = getcwd();
+$allZones = glob("*.txt");
+foreach($allZones as $zoneTxt){
+    $fileList[] = $zoneDir . "/" . $zoneTxt;
+}
+
+chdir("../../../../tools");
+
+foreach($fileList as $thisFile) {
 	$stay = true;
 	while($stay) {
 		$dbWorker = $mysqli->query("SELECT * FROM `Worker_Zone`");
 		$currentCtr = $dbWorker->fetch_assoc()["Count"];
 		
 		if($maxWkr > $currentCtr) {
-			if(strlen($row["Subdomain"]) > 0) {
-				exec("php worker_dns.php \"". $row["Subdomain"] . "." . $row["Domain"] . "\" > /dev/null &");
-				echo "assigned \"". $row["Subdomain"] . "." . $row["Domain"] . "\" ";
-			} else {
-				exec("php worker_dns.php \"" . $row["Domain"] . "\" > /dev/null &");
-				echo "assigned \"" . $row["Domain"] . "\" ";
-			}
-			
-			echo "(".($currentCtr+1)."/".$maxWkr." workers active)" . PHP_EOL;
+			exec("php worker_zone.php \"" . $thisFile . "\" > /dev/null &");
+			echo "assigned \"" . $row["Domain"] . "\" (".($currentCtr+1)."/".$maxWkr." workers active)" . PHP_EOL;
 			
 			$mysqli->query("UPDATE `Worker_Zone` SET Count = Count + 1");
 			$stay = false;

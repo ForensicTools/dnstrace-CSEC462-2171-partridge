@@ -33,7 +33,7 @@ This project currently depends on the following:
 * python-whois by joepie91
 * czdap-tools by fourkitchens (for zone file downloads)
 
-You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed. If you will be parsing zone files, additionally install python-crypto and python-requests with your package manager (as per czdap readme).
+You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed. If you will be parsing zone files, additionally install python-crypto and python-requests with your package manager (as per czdap readme) and gunzip.
 
 ### tools/config.example.php
 
