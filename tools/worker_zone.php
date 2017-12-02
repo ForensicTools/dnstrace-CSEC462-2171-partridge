@@ -26,8 +26,9 @@ if(file_exists($argv[1])) {
 	echo "Adding zonefile to database..." . PHP_EOL;
 	$setRep = false;
 	
-	$queryBase = "INSERT IGNORE INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ";
+	$queryBase = "INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ";
 	$queryValues = [];
+	$queryPost = " ON DUPLICATE KEY UPDATE `Subdomain`=`Subdomain`";
 	$counter = 0;
 
 	while (!feof($fileHandle)) {
@@ -53,7 +54,7 @@ if(file_exists($argv[1])) {
 					$counter++;
 					
 					if($counter > 500) {
-						$dbInsertNewDomain = $mysqli->query($queryBase . implode(',', $queryValues));
+						$dbInsertNewDomain = $mysqli->query($queryBase . implode(',', $queryValues) . $queryPost);
 						if(!$dbInsertNewDomain) {
 							echo "There was an error running the insert query. No domain added." . PHP_EOL;
 							echo "SQL error information: " . $mysqli->error . PHP_EOL;
@@ -67,7 +68,7 @@ if(file_exists($argv[1])) {
 	}
 	
 	if(count($queryValues) > 0) {
-		$dbInsertNewDomain = $mysqli->query($queryBase . implode(',', $queryValues));
+		$dbInsertNewDomain = $mysqli->query($queryBase . implode(',', $queryValues) . $queryPost);
 		if(!$dbInsertNewDomain) {
 			echo "There was an error running the insert query. No domain added." . PHP_EOL;
 			echo "SQL error information: " . $mysqli->error . PHP_EOL;
