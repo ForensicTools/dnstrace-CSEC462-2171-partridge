@@ -111,14 +111,16 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `IPv4` = '" . $IPv4Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
 			while($row = $dbGet->fetch_assoc()) {
-				if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+				if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 					$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 				}
-				$link = array(
-					"source" => $srcID,
-					"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
-				);
-				$links = updateLink($links, $link);
+				if(checkSuitableNEX(fixDomain($row["Subdomain"], $row["Domain"]), $excludeList)) {
+					$link = array(
+						"source" => $srcID,
+						"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
+					);
+					$links = updateLink($links, $link);
+				}
 			}
 		}
 		// A RECORD LOOKUP SECTION
@@ -128,15 +130,17 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 		$reducer = [];
 		while($row = $dbGet->fetch_assoc()) {
-			if(!in_array($row["IPv6"], $preNodes)) {
+			if(checkSuitableNode($row["IPv6"], $preNodes, $excludeList)) {
 				$preNodes[] = $row["IPv6"];
 			}
-			$link = array(
-				"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
-				"target" => array_search($row["IPv6"], $preNodes)
-			);
-			$links = updateLink($links, $link);
-			$reducer[] = $row["IPv6"];
+			if(checkSuitableNEX($row["IPv6"], $excludeList)) {
+				$link = array(
+					"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
+					"target" => array_search($row["IPv6"], $preNodes)
+				);
+				$links = updateLink($links, $link);
+				$reducer[] = $row["IPv6"];
+			}
 		}
 		$reducer = array_unique($reducer);
 
@@ -145,14 +149,16 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_AAAA` WHERE `IPv6` = '" . $IPv6Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
 			while($row = $dbGet->fetch_assoc()) {
-				if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+				if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 					$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 				}
-				$link = array(
-					"source" => $srcID,
-					"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
-				);
-				$links = updateLink($links, $link);
+				if(checkSuitableNEX(fixDomain($row["Subdomain"], $row["Domain"]), $excludeList)) {
+					$link = array(
+						"source" => $srcID,
+						"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
+					);
+					$links = updateLink($links, $link);
+				}
 			}
 		}
 		// AAAA RECORD LOOKUP SECTION
@@ -162,15 +168,17 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 		$reducer = [];
 		while($row = $dbGet->fetch_assoc()) {
-			if(!in_array($row["CNAME"], $preNodes)) {
+			if(checkSuitableNode($row["CNAME"], $preNodes, $excludeList)) {
 				$preNodes[] = $row["CNAME"];
 			}
-			$link = array(
-				"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
-				"target" => array_search($row["CNAME"], $preNodes)
-			);
-			$links = updateLink($links, $link);
-			$reducer[] = $row["CNAME"];
+			if(checkSuitableNEX($row["CNAME"], $excludeList)) {
+				$link = array(
+					"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
+					"target" => array_search($row["CNAME"], $preNodes)
+				);
+				$links = updateLink($links, $link);
+				$reducer[] = $row["CNAME"];
+			}
 		}
 		$reducer = array_unique($reducer);
 
@@ -179,14 +187,16 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_CNAME` WHERE `CNAME` = '" . $CNAME . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
 			while($row = $dbGet->fetch_assoc()) {
-				if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+				if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 					$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 				}
-				$link = array(
-					"source" => $srcID,
-					"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
-				);
-				$links = updateLink($links, $link);
+				if(checkSuitableNEX(fixDomain($row["Subdomain"], $row["Domain"]), $excludeList)) {
+					$link = array(
+						"source" => $srcID,
+						"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
+					);
+					$links = updateLink($links, $link);
+				}
 			}
 		}
 		// CNAME RECORD LOOKUP SECTION
@@ -197,15 +207,17 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 			$reducer = [];
 			while($row = $dbGet->fetch_assoc()) {
-				if(!in_array(fixDomain($row["MX_Subdomain"], $row["MX_Domain"]), $preNodes)) {
+				if(checkSuitableNode(fixDomain($row["MX_Subdomain"], $row["MX_Domain"]), $preNodes, $excludeList)) {
 					$preNodes[] = fixDomain($row["MX_Subdomain"], $row["MX_Domain"]);
 				}
-				$link = array(
-					"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
-					"target" => array_search(fixDomain($row["MX_Subdomain"], $row["MX_Domain"]), $preNodes)
-				);
-				$links = updateLink($links, $link);
-				$reducer[] = $row["MX_Subdomain"] . ":" . $row["MX_Domain"];
+				if(checkSuitableNEX(fixDomain($row["MX_Subdomain"], $row["MX_Domain"]), $excludeList)) {
+					$link = array(
+						"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
+						"target" => array_search(fixDomain($row["MX_Subdomain"], $row["MX_Domain"]), $preNodes)
+					);
+					$links = updateLink($links, $link);
+					$reducer[] = $row["MX_Subdomain"] . ":" . $row["MX_Domain"];
+				}
 			}
 			$reducer = array_unique($reducer);
 
@@ -215,14 +227,16 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 				$dbGet = $mysqli->query("SELECT * FROM `DNS_MX` WHERE CONCAT(`MX_Subdomain`, ':', `MX_Domain`) = '" . $MXD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 				
 				while($row = $dbGet->fetch_assoc()) {
-					if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+					if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 						$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 					}
-					$link = array(
-						"source" => $srcID,
-						"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
-					);
-					$links = updateLink($links, $link);
+					if(checkSuitableNEX(fixDomain($row["Subdomain"], $row["Domain"]), $excludeList)) {
+						$link = array(
+							"source" => $srcID,
+							"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
+						);
+						$links = updateLink($links, $link);
+					}
 				}
 			}
 		}
@@ -234,15 +248,17 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 			$reducer = [];
 			while($row = $dbGet->fetch_assoc()) {
-				if(!in_array(fixDomain($row["NS_Subdomain"], $row["NS_Domain"]), $preNodes)) {
+				if(checkSuitableNode(fixDomain($row["NS_Subdomain"], $row["NS_Domain"]), $preNodes, $excludeList)) {
 					$preNodes[] = fixDomain($row["NS_Subdomain"], $row["NS_Domain"]);
 				}
-				$link = array(
-					"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
-					"target" => array_search(fixDomain($row["NS_Subdomain"], $row["NS_Domain"]), $preNodes)
-				);
-				$links = updateLink($links, $link);
-				$reducer[] = $row["NS_Subdomain"] . ":" . $row["NS_Domain"];
+				if(checkSuitableNEX(fixDomain($row["NS_Subdomain"], $row["NS_Domain"]), $excludeList)) {
+					$link = array(
+						"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
+						"target" => array_search(fixDomain($row["NS_Subdomain"], $row["NS_Domain"]), $preNodes)
+					);
+					$links = updateLink($links, $link);
+					$reducer[] = $row["NS_Subdomain"] . ":" . $row["NS_Domain"];
+				}
 			}
 			$reducer = array_unique($reducer);
 
@@ -252,14 +268,16 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 				$dbGet = $mysqli->query("SELECT * FROM `DNS_NS` WHERE CONCAT(`NS_Subdomain`, ':', `NS_Domain`) = '" . $NSD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 				
 				while($row = $dbGet->fetch_assoc()) {
-					if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+					if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 						$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 					}
-					$link = array(
-						"source" => $srcID,
-						"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
-					);
-					$links = updateLink($links, $link);
+					if(checkSuitableNEX(fixDomain($row["Subdomain"], $row["Domain"]), $excludeList)) {
+						$link = array(
+							"source" => $srcID,
+							"target" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)
+						);
+						$links = updateLink($links, $link);
+					}
 				}
 			}
 		}
