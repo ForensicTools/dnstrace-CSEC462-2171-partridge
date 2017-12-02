@@ -15,6 +15,7 @@ if(count($argv) != 2) {
 	include "inc/exit.php";
 }
 
+use LayerShifter\TLDExtract\Extract;
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 $listDomains = [];
 
@@ -43,20 +44,20 @@ if(file_exists($argv[1])) {
 	}
 
 	fclose($fileHandle);
-}
+	
+	$tempDomain = $listDomains[0];
+	$parsedDomain = $ext->parse($tempDomain);
+	$flag = "ZONE-" . strtoupper($tempDomain['suffix']);
+	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \'' . $tempDomain['suffix'] . '\' from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
 
-$tempDomain = $listDomains[0];
-$parsedDomain = $ext->parse($tempDomain);
-$flag = "ZONE-" . strtoupper($tempDomain['suffix']);
-exec('php rep_add.php "' . $flag . '" "Zone data for TLD \'' . $tempDomain['suffix'] . '\' from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
+	foreach($listDomains as $fixedDomain) {
+		$parsedDomain = $ext->parse($fixedDomain);
+		$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedFQDN["subdomain"] . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $flag . "')");
 
-foreach($listDomains as $fixedDomain) {
-	$parsedDomain = $ext->parse($fixedDomain);
-	$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedFQDN["subdomain"] . "', '" . $parsedFQDN->getRegistrableDomain() . "', '". $flag . "')");
-
-	if(!$dbInsertNewDomain) {
-		echo "There was an error running the insert query. No domain added." . PHP_EOL;
-		echo "SQL error information: " . $mysqli->error . PHP_EOL;
+		if(!$dbInsertNewDomain) {
+			echo "There was an error running the insert query. No domain added." . PHP_EOL;
+			echo "SQL error information: " . $mysqli->error . PHP_EOL;
+		}
 	}
 }
 

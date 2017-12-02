@@ -51,7 +51,7 @@ foreach($fileList as $thisFile) {
 		
 		if($maxWkr > $currentCtr) {
 			exec("php worker_zone.php \"" . $thisFile . "\" > /dev/null &");
-			echo "assigned \"" . $flag . "\" (".($currentCtr+1)."/".$maxWkr." workers active)" . PHP_EOL;
+			echo "assigned \"" . $thisFile . "\" (".($currentCtr+1)."/".$maxWkr." workers active)" . PHP_EOL;
 			
 			$mysqli->query("UPDATE `Worker_Zone` SET Count = Count + 1");
 			$stay = false;
