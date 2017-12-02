@@ -13,6 +13,8 @@ $jobFQDN = mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["domain"]))
 $jobDegrees = intval($_GET["degree"]);
 $jobMXEN = intval($_GET["mxen"]);
 $jobNSEN = intval($_GET["nsen"]);
+$jobExclude = explode(" ", mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["exclude"])));
+
 if(array_key_exists("key", $_GET)) {
 	$jobKey = mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["key"]));
 } else {
@@ -51,6 +53,19 @@ if(!$lookupFQDN->isValidDomain()) {
 	include "inc/exit.php";
 }
 
+$saveExcludes = "";
+if(strlen($_GET["exclude"]) > 2) { // rudimentary check without relying on explode
+	foreach($jobExclude as $checkExclude) {
+		$parsedExclude = $ext->parse($checkExclude);
+		if(!filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && !filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && !$parsedExclude->isValidDomain()) {
+			echo json_encode(array("Success" => false, "Reason" => "Error detected in excludes list."));
+			include "inc/exit.php";
+		}
+		$saveExcludes .= $checkExclude . " ";
+	}
+}
+$saveExcludes = rtrim($saveExcludes, " ");
+
 $dbGet = $mysqli->query("SELECT * FROM `Reputation` WHERE `Domain` = '" . $lookupFQDN->getRegistrableDomain() . "'");
 
 if(mysqli_num_rows($dbGet) == 0) {
@@ -58,7 +73,7 @@ if(mysqli_num_rows($dbGet) == 0) {
 	include "inc/exit.php";
 }
 
-$dbInsertJob = $mysqli->query("INSERT INTO `Jobs` (`Key`, `Domain`, `Degree`, `MXEN`, `NSEN`) VALUES ('" . $jobKey . "', '" . $lookupFQDN->getRegistrableDomain() . "', " . $jobDegrees . ", " . $jobMXEN . ", ". $jobNSEN . ")");
+$dbInsertJob = $mysqli->query("INSERT INTO `Jobs` (`Key`, `Domain`, `Degree`, `MXEN`, `NSEN`, `Exclude`) VALUES ('" . $jobKey . "', '" . $lookupFQDN->getRegistrableDomain() . "', " . $jobDegrees . ", " . $jobMXEN . ", ". $jobNSEN . ", ". $saveExcludes . ")");
 
 if(!$dbInsertJob) {
 	echo json_encode(array("Success" => false, "Reason" => "Error interacting with database. Please contact the administrator."));

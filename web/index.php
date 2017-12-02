@@ -23,6 +23,8 @@
 	Use DNS_NS:<br>
 	<input type="radio" name="nsen" value="1"> True<br>
 	<input type="radio" name="nsen" value="0" checked> False<br>
+	Space-delimited list of results to exclude (IPs or FQDNs):<br>
+	<input type="text" name="exclude" value="127.0.0.1"><br>
 	API Key:<br>
 	<input type="text" name="key" value="NONE"><br>
 	<input type="hidden" name="ui" value="1">
