@@ -50,7 +50,7 @@ if(file_exists($argv[1])) {
 	$tempDomain = $listDomains[0];
 	$parsedDomain = $ext->parse($tempDomain);
 	$flag = "ZONE-" . strtoupper($parsedDomain["suffix"]);
-	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \'' . $parsedDomain["suffix"] . '\' from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
+	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \"' . $parsedDomain["suffix"] . '\" from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
 
 	foreach($listDomains as $fixedDomain) {
 		$parsedDomain = $ext->parse($fixedDomain);
