@@ -3,6 +3,8 @@
  * Update single zone by loading zone into database.
  */
 
+ini_set('memory_limit', '1G'); // you'd be surprised
+
 include "inc/setup.php";
 include "inc/gdns.php";
 
@@ -37,15 +39,16 @@ if(file_exists($argv[1])) {
 					echo "The domain given does not appear to be valid. Not added." . PHP_EOL;
 					echo "Got: " . $fixedDomain . PHP_EOL;
 				} else {
-					if(!in_array($fixedDomain, $listDomains)) {
-						$listDomains[] = $fixedDomain;
-					}
+					$listDomains[] = $fixedDomain;
 				}
 			}
 		}
 	}
 
 	fclose($fileHandle);
+	
+	$listDomains = array_flip($listDomains); // flip
+	$listDomains = array_flip($listDomains); // flop
 	
 	$tempDomain = $listDomains[0];
 	$parsedDomain = $ext->parse($tempDomain);
