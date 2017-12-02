@@ -28,16 +28,18 @@ if(file_exists($argv[1])) {
 		$lineRaw = fgets($fileHandle);
 		$lineClean = explode("\t", $lineRaw);
 		
-		if(strcmp($lineClean[3], "ns") === 0) {
-			$fixedDomain = rtrim($lineClean[0], ".");
-			$parsedDomain = $ext->parse($fixedDomain);
-			
-			if(!$parsedDomain->isValidDomain()) {
-				echo "The domain given does not appear to be valid. Not added." . PHP_EOL;
-				echo "Got: " . $fixedDomain . PHP_EOL;
-			} else {
-				if(!in_array($fixedDomain, $listDomains)) {
-					$listDomains[] = $fixedDomain;
+		if(count($lineClean[3]) > 3) {
+			if(strcmp($lineClean[3], "ns") === 0) {
+				$fixedDomain = rtrim($lineClean[0], ".");
+				$parsedDomain = $ext->parse($fixedDomain);
+				
+				if(!$parsedDomain->isValidDomain()) {
+					echo "The domain given does not appear to be valid. Not added." . PHP_EOL;
+					echo "Got: " . $fixedDomain . PHP_EOL;
+				} else {
+					if(!in_array($fixedDomain, $listDomains)) {
+						$listDomains[] = $fixedDomain;
+					}
 				}
 			}
 		}
