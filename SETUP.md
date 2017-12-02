@@ -31,8 +31,9 @@ And that will install a couple composer-related files as well as the necessary p
 This project currently depends on the following:
 
 * python-whois by joepie91
+* czdap-tools by fourkitchens (for zone file downloads)
 
-You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed, please open issues for any common problems until I get around to cleaning up that section.
+You can have them downloaded and installed automatically by running setup/deps.sh which will clone those softwares to deps/. Installation of all required softwares to run those dependencies is not guaranteed. If you will be parsing zone files, additionally install python-crypto and python-requests with your package manager (as per czdap readme).
 
 ### tools/config.example.php
 
@@ -66,7 +67,7 @@ You must create flags for each domain ingested using tools/rep_add.php before us
 
 ### Acquisition (Admin)
 
-Run tools/update.php with as many threads as you'd like (see its help dialogue for assistance). A good rule of thumb here is the number of cores available on your management machine multiplied by eight. This will acquire data for all domains in the database, and may take some time.
+Run tools/update_all_dns.php with as many threads as you'd like (see its help dialogue for assistance). A good rule of thumb here is the number of cores available on your management machine multiplied by eight. This will acquire data for all domains in the database, and may take some time.
 
 ### Processing (Web)
 

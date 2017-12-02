@@ -31,8 +31,8 @@
 	<input type="submit" value="Submit">
 </form>
 <br>
-<p>Graph databases provided by <a href="https://bl.ocks.org/eyaler">eyaler</a>'s magnificent D3.js wizardry</p>
-<p>Everything else developed by <a href="https://chris.partridge.tech/">Chris Partridge</a></p>
-<p>This project is open source and available on <a href="https://github.com/tweedge/dnstrace/">GitHub</a></p>
+<p>Graph databases provided by <a href="https://bl.ocks.org/eyaler" target="_blank">eyaler</a>'s magnificent D3.js wizardry</p>
+<p>Everything else developed by <a href="https://chris.partridge.tech/" target="_blank">Chris Partridge</a></p>
+<p>This project is open source and available on <a href="https://github.com/tweedge/dnstrace/" target="_blank">GitHub</a></p>
 </body>
 </html>
