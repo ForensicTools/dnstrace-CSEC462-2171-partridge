@@ -26,7 +26,7 @@ if(file_exists($argv[1])) {
 	echo "Adding zonefile to database..." . PHP_EOL;
 	$setRep = false;
 	
-	$queryBase = "INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ";
+	$queryBase = "INSERT IGNORE INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ";
 	$queryValues = [];
 	$counter = 0;
 
