@@ -24,12 +24,14 @@ if(!chdir("../deps/czdap-tools/zonedata-download")) {
 	include "inc/exit.php";
 }
 
+echo "Downloading zones from CZDS API, this may take a while..." . PHP_EOL;
 exec("python download.py");
 if(!chdir("zonefiles")) {
 	echo "No zonefiles retrieved?" . PHP_EOL;
 	include "inc/exit.php";
 }
 
+echo "Extracting downloaded zones, this may take a while..." . PHP_EOL;
 exec("gunzip *");
 
 $fileList = [];
@@ -58,6 +60,8 @@ foreach($fileList as $thisFile) {
 		}
 	}
 }
+
+//exec("rm -r ../deps/czdap-tools/zonedata-download/zonefiles");
 
 include "inc/exit.php";
 ?>
