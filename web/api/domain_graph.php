@@ -9,7 +9,7 @@ use LayerShifter\TLDExtract\Extract;
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 
 function checkSuitableNEX($item, $excludeList) {
-	if(in_array($item, $excludeList) {
+	if(in_array($item, $excludeList)) {
 		return false;
 	}
 	return true;
