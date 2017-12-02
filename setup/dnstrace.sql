@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS `Jobs` (
   `Degree` tinyint(3) unsigned DEFAULT NULL,
   `MXEN` bit(1) DEFAULT NULL,
   `NSEN` bit(1) DEFAULT NULL,
+  `Exclude` VARCHAR(1024) NULL DEFAULT NULL,
   `Current` varchar(256) DEFAULT 'WAITING',
   KEY `JobID` (`JobID`),
   KEY `Current` (`Current`)
