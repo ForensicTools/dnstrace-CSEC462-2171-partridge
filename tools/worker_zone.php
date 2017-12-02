@@ -19,12 +19,13 @@ if(count($argv) != 2) {
 
 use LayerShifter\TLDExtract\Extract;
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
-$listDomains = [];
+$doneDomains = [];
 
 if(file_exists($argv[1])) {
 	$fileName = $argv[1];
 	$fileHandle = fopen($fileName, "r");
 	echo "Adding zonefile to database..." . PHP_EOL;
+	$setRep = false;
 
 	while (!feof($fileHandle)) {
 		$lineRaw = fgets($fileHandle);
@@ -39,31 +40,25 @@ if(file_exists($argv[1])) {
 					echo "The domain given does not appear to be valid. Not added." . PHP_EOL;
 					echo "Got: " . $fixedDomain . PHP_EOL;
 				} else {
-					$listDomains[] = $fixedDomain;
+					if(!$setRep) {
+						$flag = "ZONE-" . strtoupper($parsedDomain["suffix"]);
+						exec('php rep_add.php "' . $flag . '" "Zone data for TLD \"' . $parsedDomain["suffix"] . '\" from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
+						$setRep = true;
+					}
+					if(!isset($doneDomains[$fixedDomain])) {
+						$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedDomain["subdomain"] . "', '" . $parsedDomain->getRegistrableDomain() . "', '". $flag . "')");
+
+						if(!$dbInsertNewDomain) {
+							echo "There was an error running the insert query. No domain added." . PHP_EOL;
+							echo "SQL error information: " . $mysqli->error . PHP_EOL;
+						}
+						$doneDomains[$fixedDomain] = 1;
+					}
 				}
 			}
 		}
 	}
-
 	fclose($fileHandle);
-	
-	$listDomains = array_flip($listDomains); // flip
-	$listDomains = array_values(array_flip($listDomains)); // flop
-	
-	$tempDomain = $listDomains[0];
-	$parsedDomain = $ext->parse($tempDomain);
-	$flag = "ZONE-" . strtoupper($parsedDomain["suffix"]);
-	exec('php rep_add.php "' . $flag . '" "Zone data for TLD \"' . $parsedDomain["suffix"] . '\" from CZDS (Centralized Zone Data Service) at https://czds.icann.org/" "0" > /dev/null');
-
-	foreach($listDomains as $fixedDomain) {
-		$parsedDomain = $ext->parse($fixedDomain);
-		$dbInsertNewDomain = $mysqli->query("INSERT INTO `Reputation` (`Subdomain`, `Domain`, `Source`) VALUES ('" . $parsedDomain["subdomain"] . "', '" . $parsedDomain->getRegistrableDomain() . "', '". $flag . "')");
-
-		if(!$dbInsertNewDomain) {
-			echo "There was an error running the insert query. No domain added." . PHP_EOL;
-			echo "SQL error information: " . $mysqli->error . PHP_EOL;
-		}
-	}
 }
 
 $mysqli->query("UPDATE `Worker_Zone` SET Count = Count - 1");
