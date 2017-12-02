@@ -48,7 +48,7 @@ if(file_exists($argv[1])) {
 	fclose($fileHandle);
 	
 	$listDomains = array_flip($listDomains); // flip
-	$listDomains = array_flip($listDomains); // flop
+	$listDomains = array_values(array_flip($listDomains)); // flop
 	
 	$tempDomain = $listDomains[0];
 	$parsedDomain = $ext->parse($tempDomain);
