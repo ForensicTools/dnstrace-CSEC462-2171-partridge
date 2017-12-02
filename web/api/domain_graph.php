@@ -8,6 +8,23 @@ use LayerShifter\TLDExtract\Extract;
 
 $ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 
+function checkSuitableNEX($item, $excludeList) {
+	if(in_array($item, $excludeList) {
+		return false;
+	}
+	return true;
+}
+
+function checkSuitableNode($item, $preNodes, $excludeList) {
+	if(!checkSuitableNEX($item, $excludeList)) {
+		return false;
+	}
+	if(in_array($item, $preNodes)) {
+		return false;
+	}
+	return true;
+}
+
 function fixDomain($subdomain, $domain) {
 	if(strlen($subdomain) > 0) {
 		return $subdomain . "." . $domain;
@@ -38,7 +55,7 @@ $nodes = [];
 $links = [];
 $performed = [];
 
-function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $jobID) {
+function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID) {
 	foreach($preNodes as $FQDN) {
 		$lookupFQDN = $ext->parse($FQDN);
 		
@@ -52,13 +69,13 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $jo
 			continue;
 		}
 
-		if(!in_array($lookupFQDN->getRegistrableDomain(), $preNodes)) {
+		if(checkSuitableNode($lookupFQDN->getRegistrableDomain(), $preNodes, $excludeList)) {
 			$preNodes[] = $lookupFQDN->getRegistrableDomain();
 		}
 
 		$srcID = array_search($lookupFQDN->getRegistrableDomain(), $preNodes);
 		while($row = $dbGet->fetch_assoc()) {
-			if(!in_array(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes)) {
+			if(checkSuitableNode(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes, $excludeList)) {
 				$preNodes[] = fixDomain($row["Subdomain"], $row["Domain"]);
 			}
 		}
@@ -75,15 +92,17 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $jo
 
 		$reducer = [];
 		while($row = $dbGet->fetch_assoc()) {
-			if(!in_array($row["IPv4"], $preNodes)) {
+			if(checkSuitableNode($row["IPv4"], $preNodes, $excludeList)) {
 				$preNodes[] = $row["IPv4"];
 			}
-			$link = array(
-				"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
-				"target" => array_search($row["IPv4"], $preNodes)
-			);
-			$links = updateLink($links, $link);
-			$reducer[] = $row["IPv4"];
+			if(checkSuitableNEX($row["IPv4"], $excludeList)) {
+				$link = array(
+					"source" => array_search(fixDomain($row["Subdomain"], $row["Domain"]), $preNodes),
+					"target" => array_search($row["IPv4"], $preNodes)
+				);
+				$links = updateLink($links, $link);
+				$reducer[] = $row["IPv4"];
+			}
 		}
 		$reducer = array_unique($reducer);
 
@@ -272,12 +291,17 @@ if($jobData["NSEN"] == 1) {
 } else {
 	$NSEN = false;
 }
+if(strlen($jobData["Exclude"]) > 2) {
+	$excludeList = explode(" ", $jobData["Exclude"]);
+} else {
+	$excludeList = [];
+}
 
 $base = $ext->parse($jobData["Domain"]);
 $preNodes[] = $base->getRegistrableDomain();
 
 for($i = 0; $i < $jobData["Degree"]; $i++) {
-	list($preNodes, $links, $performed) = perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $jobID);
+	list($preNodes, $links, $performed) = perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID);
 }
 
 // cleanup
