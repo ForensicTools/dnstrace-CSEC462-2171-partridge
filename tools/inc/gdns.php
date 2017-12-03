@@ -18,7 +18,7 @@ function gdnsExecute($domain, $qtype) {
 	
 	if($err) {
 		//trigger_error("Detected CURL error when querying GDNS", E_USER_WARNING);
-		return [false, [$err, false]]; // so count == 2
+		return [false, [$err, false]]; // so array=true
 	} else {
 		$json = json_decode($response, true);
 		
@@ -63,7 +63,7 @@ function gdnsGetGeneral($domain, $qtype) {
 		$ret = gdnsGetGeneralLooped($domain, $qtype);
 		if($ret[0]) {
 			$finished = true;
-		} if(!$ret[0] && count($ret[1]) == 1) {
+		} if(!$ret[0] && !is_array($ret[1])) {
 			$finished = true;
 		}
 		$i++;
