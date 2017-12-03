@@ -57,11 +57,9 @@ $saveExcludes = "";
 if(strlen($_GET["exclude"]) > 2) { // rudimentary check without relying on explode
 	foreach($jobExclude as $checkExclude) {
 		$parsedExclude = $ext->parse($checkExclude);
-		if(!filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && !filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && !$parsedExclude->isValidDomain()) {
-			echo json_encode(array("Success" => false, "Reason" => "Error detected in excludes list."));
-			include "inc/exit.php";
+		if(filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || filter_var($checkExclude, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || $parsedExclude->isValidDomain()) {
+			$saveExcludes .= $checkExclude . " ";
 		}
-		$saveExcludes .= $checkExclude . " ";
 	}
 }
 $saveExcludes = rtrim($saveExcludes, " ");

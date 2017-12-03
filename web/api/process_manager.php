@@ -23,7 +23,7 @@ while(true) {
 	$currentCtr = $dbWorker->fetch_assoc()["Count"];
 	
 	if($maxWkr > $currentCtr) {
-		$dbGet = $mysqli->query("SELECT * FROM `Jobs` WHERE `Current` = 'WAITING'");
+		$dbGet = $mysqli->query("SELECT * FROM `Jobs` WHERE `Current` = 'WAITING' ORDER BY `JobID` ASC");
 		
 		if(mysqli_num_rows($dbGet) == 0) {
 			sleep(10);
