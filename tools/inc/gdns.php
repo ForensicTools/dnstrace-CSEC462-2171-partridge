@@ -70,6 +70,7 @@ function gdnsGetGeneral($domain, $qtype) {
 		sleep(1);
 	}
 	
+	sleep(1); // temporary ratelimit avoidance measure
 	return $ret;
 }
 
