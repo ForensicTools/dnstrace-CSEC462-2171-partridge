@@ -61,7 +61,7 @@ foreach($fileList as $thisFile) {
 	}
 }
 
-//exec("rm -r ../deps/czdap-tools/zonedata-download/zonefiles");
+exec("rm -r ../deps/czdap-tools/zonedata-download/zonefiles");
 
 include "inc/exit.php";
 ?>
