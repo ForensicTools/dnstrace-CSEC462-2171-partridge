@@ -23,12 +23,15 @@ include "../_inc/format.php";
 						
 						<p>By examining the relationships between domain resolution and (eventually) WHOIS data, we can uncover many secrets hidden in the noise of DNS. dnstrace is a suite of tools that ingest, acquire, parse, and render domain data from many sources on a large scale. It is hosted here and limited access is provided free to all people who wish to perform research using its database.</p>
 						
-						<p>Uses include:
-							<li><b>Examining domain relationships with force-directed graphs</b></li>
-							<li>Generate reputation for a domain (soon)</li>
-							<li>Retrieving verbose domain information (soon)</li>
-							<li>Create and download dynamic blacklists (soon)</li>
+						<p>Possible uses include:
+							<li>Examine domain relationships with force-directed graphs.</li>
+							<li>Find patterns in cybercrime to discern threat actor movements.</li>
+							<li>Detect information leakage due to human errors.</li>
+							<li>Generate reputation for a domain (soon).</li>
+							<li>Create and download probabilistic blacklists (soon).</li>
 						</p>
+						
+						<p>dnstrace is a tool designed to be used by cybersecurity professionals and researchers. Please use this service responsibly. If you are a researcher and would like additional access to the system (via API key for extended functionality or otherwise), please email the maintainer with details of your usage - we'll get back to you ASAP.</p>
 						
 						<p>Additionally, dnstrace aims to be extremely programmable and extensible, so API docs are coming soon.</p>
 					</div>

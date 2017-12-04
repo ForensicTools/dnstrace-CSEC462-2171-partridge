@@ -54,8 +54,9 @@ $preNodes = [];
 $nodes = [];
 $links = [];
 $performed = [];
+$actuallySquares = [];
 
-function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID) {
+function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID, $actuallySquares) {
 	foreach($preNodes as $FQDN) {
 		$lookupFQDN = $ext->parse($FQDN);
 		
@@ -107,6 +108,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 		$reducer = array_unique($reducer);
 
 		foreach($reducer as $IPv4Addr) {
+			$actuallySquares[] = $IPv4Addr;
 			$srcID = array_search($IPv4Addr, $preNodes);
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_A` WHERE `IPv4` = '" . $IPv4Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
@@ -145,6 +147,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 		$reducer = array_unique($reducer);
 
 		foreach($reducer as $IPv6Addr) {
+			$actuallySquares[] = $IPv6Addr;
 			$srcID = array_search($IPv6Addr, $preNodes);
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_AAAA` WHERE `IPv6` = '" . $IPv6Addr . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
@@ -183,6 +186,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 		$reducer = array_unique($reducer);
 
 		foreach($reducer as $CNAME) {
+			$actuallySquares[] = $CNAME;
 			$srcID = array_search($CNAME, $preNodes);
 			$dbGet = $mysqli->query("SELECT * FROM `DNS_CNAME` WHERE `CNAME` = '" . $CNAME . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 			
@@ -223,6 +227,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 			foreach($reducer as $MXD) {
 				$temp = explode(":", $MXD);
+				$actuallySquares[] = fixDomain($temp[0], $temp[1]);
 				$srcID = array_search(fixDomain($temp[0], $temp[1]), $preNodes);
 				$dbGet = $mysqli->query("SELECT * FROM `DNS_MX` WHERE CONCAT(`MX_Subdomain`, ':', `MX_Domain`) = '" . $MXD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 				
@@ -264,6 +269,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 
 			foreach($reducer as $NSD) {
 				$temp = explode(":", $NSD);
+				$actuallySquares[] = fixDomain($temp[0], $temp[1]);
 				$srcID = array_search(fixDomain($temp[0], $temp[1]), $preNodes);
 				$dbGet = $mysqli->query("SELECT * FROM `DNS_NS` WHERE CONCAT(`NS_Subdomain`, ':', `NS_Domain`) = '" . $NSD . "' AND `Domain` != '" . $lookupFQDN->getRegistrableDomain() . "'");
 				
@@ -284,7 +290,7 @@ function perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $ex
 		// NS RECORD LOOKUP SECTION
 	}
 	
-	return array($preNodes, $links, $performed);
+	return array($preNodes, $links, $performed, $actuallySquares);
 }
 
 if(count($argv) != 2) {
@@ -319,10 +325,11 @@ $base = $ext->parse($jobData["Domain"]);
 $preNodes[] = $base->getRegistrableDomain();
 
 for($i = 0; $i < $jobData["Degree"]; $i++) {
-	list($preNodes, $links, $performed) = perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID);
+	list($preNodes, $links, $performed, $actuallySquares) = perform($preNodes, $links, $mysqli, $ext, $performed, $MXEN, $NSEN, $excludeList, $jobID, $actuallySquares);
 }
 
 // cleanup
+$mysqli->query('UPDATE `Jobs` SET `Current` = "BUILDING GRAPH" WHERE `JobID` = ' . $jobID);
 foreach($preNodes as $node) { // placeholder
 	$nodeObj = $ext->parse($node);
 	if(strcmp($nodeObj->getRegistrableDomain(), $node) !== 0) {
@@ -334,10 +341,17 @@ foreach($preNodes as $node) { // placeholder
 			$links = updateLink($links, $link);
 		}
 	}
-	$nodes[] = array(
-		"id" => $node,
-		"type" => "circle"
-	);
+	if(in_array($node, $actuallySquares)) {
+		$nodes[] = array(
+			"id" => $node,
+			"type" => "square"
+		);
+	} else {
+		$nodes[] = array(
+			"id" => $node,
+			"type" => "circle"
+		);
+	}
 }
 
 $mysqli->query('UPDATE `Jobs` SET `Current` = "DONE" WHERE `JobID` = ' . $jobID);

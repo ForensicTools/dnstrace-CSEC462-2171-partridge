@@ -61,7 +61,7 @@ include "../_inc/format.php";
 							</div>
 							<div class="form-group">
 								<label>API Key</label>
-								<input class="form-control" name="key" value="NONE">
+								<input class="form-control" name="key" placeholder="None">
 							</div>
 							<input type="hidden" name="ui" value="1">
 							<button type="submit" class="btn btn-default">Submit</button>
