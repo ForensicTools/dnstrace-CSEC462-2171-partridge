@@ -39,7 +39,7 @@ while(true) {
 			sleep(1);
 		}
 	} else {
-		sleep(5);
+		sleep(2);
 	}
 }
 

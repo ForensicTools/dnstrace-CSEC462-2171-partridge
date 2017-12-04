@@ -341,15 +341,37 @@ foreach($preNodes as $node) { // placeholder
 			$links = updateLink($links, $link);
 		}
 	}
+	
 	if(in_array($node, $actuallySquares)) {
+		$nodeType = "square";
+	} else {
+		$nodeType = "circle";
+	}
+	
+	if($nodeObj->isValidDomain()) {
+		$dbGet = $mysqli->query("SELECT * FROM `Reputation` LEFT JOIN `Sources` ON `Reputation`.`Source`=`Sources`.`ID` WHERE `Subdomain` = '" . $nodeObj["subdomain"] . "' AND `Domain` = '" . $nodeObj->getRegistrableDomain() . "'");
+		
+		$nodeRet = 0;
+		$nodeTotal = 0;
+		while($row = $dbGet->fetch_assoc()) {
+			$nodeTotal = $nodeTotal + $row["Score"];
+			$nodeRet++;
+		}
+		if($nodeRet == 0) {
+			$nodeScore = 0;
+		} else {
+			$nodeScore = $nodeTotal / $nodeRet;
+		}
+		
 		$nodes[] = array(
+			"score" => $nodeScore,
 			"id" => $node,
-			"type" => "square"
+			"type" => $nodeType
 		);
 	} else {
 		$nodes[] = array(
 			"id" => $node,
-			"type" => "circle"
+			"type" => $nodeType
 		);
 	}
 }
