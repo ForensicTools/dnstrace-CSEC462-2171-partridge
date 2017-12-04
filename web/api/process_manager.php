@@ -26,7 +26,7 @@ while(true) {
 		$dbGet = $mysqli->query("SELECT * FROM `Jobs` WHERE `Current` = 'WAITING' ORDER BY `JobID` ASC");
 		
 		if(mysqli_num_rows($dbGet) == 0) {
-			sleep(10);
+			sleep(2);
 		} else {
 			$newThread = $dbGet->fetch_assoc();
 			$mysqli->query('UPDATE `Jobs` SET `Current` = "STARTING" WHERE `JobID` = ' . $newThread["JobID"]);
@@ -36,10 +36,10 @@ while(true) {
 			echo "(".($currentCtr+1)."/".$maxWkr." processing threads active)" . PHP_EOL;
 			$mysqli->query("UPDATE `Processors` SET Count = Count + 1");
 			
-			sleep(1);
+			sleep(2);
 		}
 	} else {
-		sleep(2);
+		sleep(4);
 	}
 }
 
