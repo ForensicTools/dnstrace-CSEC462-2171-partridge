@@ -31,7 +31,7 @@ while(true) {
 			$newThread = $dbGet->fetch_assoc();
 			$mysqli->query('UPDATE `Jobs` SET `Current` = "STARTING" WHERE `JobID` = ' . $newThread["JobID"]);
 			
-			exec("php domain_graph.php " . $newThread["JobID"] . " > jobs/" . $newThread["JobID"] . ".json &");
+			exec("php domain_graph.php " . $newThread["JobID"] . " > /dev/null &");
 		
 			echo "(".($currentCtr+1)."/".$maxWkr." processing threads active)" . PHP_EOL;
 			$mysqli->query("UPDATE `Processors` SET Count = Count + 1");
