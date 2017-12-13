@@ -19,7 +19,7 @@ if(array_key_exists("key", $_POST) && array_key_exists("fqdn", $_POST) && array_
 	include "inc/exit.php";
 }
 
-$dbGet = $mysqli->query("SELECT * FROM `API_Keys` WHERE `Key` = '" . $jobKey . "'");
+$dbGet = $mysqli->query("SELECT * FROM `API_Keys` WHERE `Key` = '" . $key . "'");
 
 if(mysqli_num_rows($dbGet) == 0) {
 	echo json_encode(array("Success" => false, "Reason" => "Invalid key."));
