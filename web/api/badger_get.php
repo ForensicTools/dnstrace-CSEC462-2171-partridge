@@ -30,7 +30,7 @@ if(!$dbGetTemp) {
 }
 
 $dbDel = $mysqli->query("DELETE FROM `BADGER_Temp` WHERE `BadgerID` = '" . $key . "'");
-if(!$dbGetTemp) {
+if(!$dbDel) {
 	echo json_encode(array("Success" => false, "Reason" => "Delete failed, contact the admin."));
 	include "inc/exit.php";
 }
