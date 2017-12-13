@@ -32,21 +32,19 @@ while(true) {
 				$fqdns[] = fixDomain($aDomain["Subdomain"], $aDomain["Domain"]);
 			}
 			
-			$dbGetJobs = $mysqli->query("UPDATE `BADGER_Jobs` SET `IdxStart` = '" . $offset . "', `IdxEnd` = '" . ($offset + $numRet) . "', `Issued` = 1 WHERE `BadgerID` = '" . $aJob["BadgerID"] . "'");
+			$dbGetJobs = $mysqli->query("UPDATE `BADGER_Jobs` SET `IdxStart` = '" . $offset . "', `IdxEnd` = '" . ($offset + $numRet) . "', `Issued` = 1 WHERE `BadgerID` = '" . $row["BadgerID"] . "'");
 			
 			$data = json_encode($fqdns);
 			$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Temp` (`BadgerID`, `Data`) VALUES ('" . $key . "', '" . $data . "')");
 
-			echo "Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $aJob["BadgerID"] . PHP_EOL;
+			echo "Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $row["BadgerID"] . PHP_EOL;
 			
-			if($numRet < $aJob["Requested"]) {
+			if($numRet < $row["Requested"]) {
 				$offset = 0;
 			} else {
 				$offset = $offset + $numRet;
 			}
-			$dbGetDomains->free();
 		}
-		$dbGetJobs->free();
 		sleep(1);
 	}
 }
