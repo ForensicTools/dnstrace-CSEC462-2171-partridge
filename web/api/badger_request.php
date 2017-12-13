@@ -1,18 +1,21 @@
 <?php
-/* web/api/badger_req.php
+/* web/api/badger_request.php
  * Request job for badger client.
  */
 
 include "inc/setup.php";
 include '../base.php';
-use LayerShifter\TLDExtract\Extract;
 
-$ext = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
-
-if(array_key_exists("key", $_GET)) {
+if(array_key_exists("key", $_GET) && array_key_exists("num", $_GET)) {
 	$key = mysqli_real_escape_string($mysqli, htmlspecialchars($_GET["key"]));
+	$num = intval($_GET["num"]);
 } else {
-	echo json_encode(array("Success" => false, "Reason" => "No key provided."));
+	echo json_encode(array("Success" => false, "Reason" => "Missing critical field of data."));
+	include "inc/exit.php";
+}
+
+if($num < 1 || $num > 10000) {
+	echo json_encode(array("Success" => false, "Reason" => "Requested domains out of bounds."));
 	include "inc/exit.php";
 }
 
@@ -23,7 +26,7 @@ if(mysqli_num_rows($dbGet) == 0) {
 	include "inc/exit.php";
 }
 
-$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Jobs` (`BadgerID`) VALUES ('" . $key . "')");
+$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Jobs` (`BadgerID`, `Requested`) VALUES ('" . $key . "', " . $num . ")");
 
 if(!$dbInsertJob) {
 	echo json_encode(array("Success" => false, "Reason" => "Error requesting job. Please contact the administrator."));
