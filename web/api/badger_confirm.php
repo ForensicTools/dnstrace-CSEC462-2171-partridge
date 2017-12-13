@@ -6,7 +6,7 @@
 include '../base.php';
 
 if(array_key_exists("key", $_GET)) {
-	if(ctype_alnum($_GET["key"]) {
+	if(ctype_alnum($_GET["key"])) {
 		$key = $_GET["key"];
 	} else {
 		echo json_encode(array("Success" => false, "Reason" => "Key is not alphanumeric."));
