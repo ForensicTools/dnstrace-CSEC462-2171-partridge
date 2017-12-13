@@ -20,16 +20,13 @@ $offset = 0;
 while(true) {
 	$dbGetJobs = $mysqli->query("SELECT * FROM `BADGER_Jobs` WHERE `Issued` = 0");
 	$fqdns = [];
-	if($dbGetJobs->num_rows > 0) {
+	if(!$dnsGetJobs) {
+		sleep(2);
+	} else {
 		while($aJob = $dbGetJobs->fetch_assoc()) {
 			$dbGetDomains = $mysqli->query("SELECT * FROM `Reputation` LIMIT " . $aJob["Requested"] . " OFFSET " . $offset);
 			
 			$numRet = $dbGetDomains->num_rows;
-			if($numRet < $aJob["Requested"]) {
-				$offset = 0;
-			} else {
-				$offset = $offset + $numRet;
-			}
 			
 			while($aDomain = $dbGetDomains->fetch_assoc()) {
 				$fqdns[] = fixDomain($aDomain["Subdomain"], $aDomain["Domain"]);
@@ -37,10 +34,20 @@ while(true) {
 			
 			$dbGetJobs = $mysqli->query("UPDATE `BADGER_Jobs` SET `IdxStart` = '" . $offset . "', `IdxEnd` = '" . ($offset + $numRet) . "', `Issued` = 1 WHERE `BadgerID` = '" . $aJob["BadgerID"] . "'");
 			
-			$data = json_encode(array("Success" => true, "Todo" => $fqdns));
-			file_put_contents("/var/www/html/api/badger/" . $aJob["BadgerID"], $data);
+			$data = json_encode($fqdns));
+			$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Temp` (`BadgerID`, `Data`) VALUES ('" . $key . "', " . $data . ")");
+
 			echo "Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $aJob["BadgerID"] . PHP_EOL;
+			
+			if($numRet < $aJob["Requested"]) {
+				$offset = 0;
+			} else {
+				$offset = $offset + $numRet;
+			}
+			$dbGetDomains->free();
 		}
+		$dbGetJobs->free();
 	}
-	sleep(2);
+	sleep(1);
 }
+?>
