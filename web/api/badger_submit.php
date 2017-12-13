@@ -13,7 +13,7 @@ if(array_key_exists("key", $_POST) && array_key_exists("fqdn", $_POST) && array_
 	$key = mysqli_real_escape_string($mysqli, htmlspecialchars($_POST["key"]));
 	$postedFQDN = mysqli_real_escape_string($mysqli, htmlspecialchars($_POST["fqdn"]));
 	$postedType = mysqli_real_escape_string($mysqli, htmlspecialchars($_POST["type"]));
-	$postedResult = mysqli_real_escape_string($mysqli, htmlspecialchars($_POST["result"]));
+	$postedResult = mysqli_real_escape_string($mysqli, $_POST["result"]);
 } else {
 	echo json_encode(array("Success" => false, "Reason" => "Missing critical field of data."));
 	include "inc/exit.php";
