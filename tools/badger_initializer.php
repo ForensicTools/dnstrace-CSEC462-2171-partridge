@@ -37,7 +37,7 @@ while(true) {
 			$data = json_encode($fqdns);
 			$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Temp` (`BadgerID`, `Data`) VALUES ('" . $row["BadgerID"] . "', '" . $data . "')");
 
-			echo "# " . $row["ID"] . " Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $row["BadgerID"] . PHP_EOL;
+			echo "#" . $row["ID"] . " Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $row["BadgerID"] . PHP_EOL;
 			
 			if($numRet < $row["Requested"]) {
 				$offset = 0;
