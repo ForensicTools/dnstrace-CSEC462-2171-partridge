@@ -34,7 +34,7 @@ while(true) {
 			
 			$dbGetJobs = $mysqli->query("UPDATE `BADGER_Jobs` SET `IdxStart` = '" . $offset . "', `IdxEnd` = '" . ($offset + $numRet) . "', `Issued` = 1 WHERE `BadgerID` = '" . $aJob["BadgerID"] . "'");
 			
-			$data = json_encode($fqdns));
+			$data = json_encode($fqdns);
 			$dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Temp` (`BadgerID`, `Data`) VALUES ('" . $key . "', " . $data . ")");
 
 			echo "Issued " . $offset . " -> " . ($offset + $numRet) . " to " . $aJob["BadgerID"] . PHP_EOL;
