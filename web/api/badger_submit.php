@@ -26,7 +26,7 @@ if(mysqli_num_rows($dbGet) == 0) {
 	include "inc/exit.php";
 }
 
-$json = json_decode($response, true);
+$json = json_decode($postedResult, true);
 	
 if(!$json) {
 	echo json_encode(array("Success" => false, "Reason" => "Error decoding data. Please contact the administrator."));
