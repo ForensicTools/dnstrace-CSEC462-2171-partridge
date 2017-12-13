@@ -30,6 +30,7 @@ $json = json_decode($response, true);
 	
 if(!$json) {
 	echo json_encode(array("Success" => false, "Reason" => "Error decoding data. Please contact the administrator."));
+	include "inc/exit.php";
 }	
 
 $dbInsertJob = $mysqli->query("INSERT INTO `BADGER_Validate` (`Key`, `FQDN`, `Type`, `Data`) VALUES ('" . $key . "', '" . $postedFQDN . "', '" . $postedType . "', '" . $postedResult . "')");
