@@ -20,7 +20,7 @@ $offset = 0;
 while(true) {
 	$dbGetJobs = $mysqli->query("SELECT * FROM `BADGER_Jobs` WHERE `Issued` = 0");
 	$fqdns = [];
-	if(!$dnsGetJobs) {
+	if(!$dbGetJobs) {
 		sleep(2);
 	} else {
 		while($aJob = $dbGetJobs->fetch_assoc()) {
