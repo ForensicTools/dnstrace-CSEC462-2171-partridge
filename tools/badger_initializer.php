@@ -26,10 +26,12 @@ while(true) {
 		$numRet = $dbGetDomains->num_rows;
 		if($numRet < $aJob["Requested"]) {
 			$offset = 0;
+		} else {
+			$offset = $offset + $numRet;
 		}
 		
 		while($aDomain = $dbGetDomains->fetch_assoc()) {
-			$fqdns[] = fixDomain($aDomain["Subdomain"], $aDomain["Domains"]);
+			$fqdns[] = fixDomain($aDomain["Subdomain"], $aDomain["Domain"]);
 		}
 		
 		$dbGetJobs = $mysqli->query("UPDATE `BADGER_Jobs` SET `IdxStart` = '" . $offset . "', `IdxEnd` = '" . ($offset + $numRet) . "', `Issued` = 1 WHERE `BadgerID` = '" . $aJob["BadgerID"] . "'");
