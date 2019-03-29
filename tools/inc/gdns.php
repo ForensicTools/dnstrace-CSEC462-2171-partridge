@@ -18,7 +18,7 @@ function gdnsExecute($domain, $qtype) {
 	
 	if($err) {
 		//trigger_error("Detected CURL error when querying GDNS", E_USER_WARNING);
-		return [false, $err];
+		return [false, [$err, false]]; // so array=true
 	} else {
 		$json = json_decode($response, true);
 		
@@ -36,7 +36,7 @@ function gdnsExecute($domain, $qtype) {
 	}
 }
 
-function gdnsGetGeneral($domain, $qtype) {
+function gdnsGetGeneralLooped($domain, $qtype) {
 	$ret = gdnsExecute($domain, $qtype);
 	$retArr = [];
 	
@@ -52,6 +52,26 @@ function gdnsGetGeneral($domain, $qtype) {
 	} else {
 		return $ret;
 	}
+}
+
+function gdnsGetGeneral($domain, $qtype) {
+	$finished = false;
+	$max = 3;
+	$i = 0;
+	
+	while(!$finished && $i < $max) {
+		$ret = gdnsGetGeneralLooped($domain, $qtype);
+		if($ret[0]) {
+			$finished = true;
+		} if(!$ret[0] && !is_array($ret[1])) {
+			$finished = true;
+		}
+		$i++;
+		sleep(1);
+	}
+	
+	sleep(1); // temporary ratelimit avoidance measure
+	return $ret;
 }
 
 ?>
